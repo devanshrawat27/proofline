@@ -11,8 +11,8 @@ import { apiFetch, ApiClientError } from "@/lib/api";
 
 export function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("owner@demo.goodsignal.local");
-  const [password, setPassword] = useState("demo-password-123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -33,8 +33,8 @@ export function LoginForm() {
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-7 shadow-card">
-      <h1 className="text-lg font-semibold text-ink">Sign in to Goodsignal</h1>
-      <p className="mt-1 text-sm text-subtle">Use a demo account or your own organization.</p>
+      <h1 className="text-lg font-semibold text-ink">Sign in to Proofline</h1>
+      <p className="mt-1 text-sm text-subtle">Sign in to your workspace.</p>
 
       <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
         {error ? <Alert tone="error">{error}</Alert> : null}

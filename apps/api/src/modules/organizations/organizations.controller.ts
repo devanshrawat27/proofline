@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Patch } from "@nestjs/common";
-import { updateOrganizationSchema } from "@goodsignal/shared-types";
-import type { UpdateOrganizationInput } from "@goodsignal/shared-types";
+import { updateOrganizationSchema } from "@proofline/shared-types";
+import type { UpdateOrganizationInput } from "@proofline/shared-types";
 import { CurrentUser, RequirePermissions } from "../../common/auth/auth.decorators";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";
 import { ZodValidationPipe } from "../../common/http/zod-validation.pipe";

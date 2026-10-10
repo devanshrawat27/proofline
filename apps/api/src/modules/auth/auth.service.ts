@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import type { OrgRole, SignupInput, LoginInput } from "@goodsignal/shared-types";
+import type { OrgRole, SignupInput, LoginInput } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";

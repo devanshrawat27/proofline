@@ -1,6 +1,6 @@
 import type { ExecutionContext } from "@nestjs/common";
 import { SetMetadata, createParamDecorator } from "@nestjs/common";
-import type { Permission } from "@goodsignal/shared-types";
+import type { Permission } from "@proofline/shared-types";
 import type { AuthenticatedUser } from "./auth.types";
 
 export const IS_PUBLIC_KEY = "auth:isPublic";

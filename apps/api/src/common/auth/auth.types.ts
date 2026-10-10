@@ -1,4 +1,4 @@
-import type { OrgRole } from "@goodsignal/shared-types";
+import type { OrgRole } from "@proofline/shared-types";
 
 /** The authenticated principal resolved from a valid session. */
 export interface AuthenticatedUser {

@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import type { OrgRole } from "@goodsignal/shared-types";
+import type { OrgRole } from "@proofline/shared-types";
 import { SERVER_API_BASE_URL } from "./config";
 
 export interface SessionContext {
@@ -15,7 +15,7 @@ export interface SessionContext {
   membership: { id: string; role: OrgRole };
 }
 
-const COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "goodsignal_session";
+const COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "proofline_session";
 
 /**
  * Reads the authenticated session on the server by forwarding the session

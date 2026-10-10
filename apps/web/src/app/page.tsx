@@ -55,9 +55,9 @@ export default function LandingPage() {
               evidence-backed cases your team can actually close.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/login">
+              <Link href="/signup">
                 <Button size="lg">
-                  Explore the demo <ArrowRight className="h-4 w-4" />
+                  Get started <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="#how">
@@ -104,9 +104,8 @@ export default function LandingPage() {
       </main>
 
       <footer className="mx-auto max-w-6xl px-6 py-10 text-xs text-subtle">
-        <p>
-          Goodsignal is a work in progress. Screens shown use clearly-labelled sample data. No customer
-          claims, certifications, or accuracy figures are asserted.
+        <p className="text-subtle">
+          © {new Date().getFullYear()} Proofline. Every delivery. Every discrepancy. Proven.
         </p>
       </footer>
     </div>
@@ -124,7 +123,7 @@ function ProductPreview() {
     <div className="rounded-2xl border border-line bg-surface p-5 shadow-raised">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-medium text-subtle">Case GS-1042 · Sample data</p>
+          <p className="text-xs font-medium text-subtle">Case GS-1042</p>
           <p className="mt-0.5 text-sm font-semibold text-ink">LED Driver 12W — quantity mismatch</p>
         </div>
         <StatusBadge tone="warning">Needs review</StatusBadge>

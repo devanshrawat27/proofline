@@ -2,8 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { inviteMemberSchema, ORG_ROLES } from "@goodsignal/shared-types";
-import type { OrgRole } from "@goodsignal/shared-types";
+import { inviteMemberSchema, ORG_ROLES } from "@proofline/shared-types";
+import type { OrgRole } from "@proofline/shared-types";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FieldError, Label } from "@/components/ui/field";

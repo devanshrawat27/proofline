@@ -13,7 +13,7 @@ const envSchema = z.object({
 
   REDIS_URL: z.string().url().optional(),
 
-  SESSION_COOKIE_NAME: z.string().min(1).default("goodsignal_session"),
+  SESSION_COOKIE_NAME: z.string().min(1).default("proofline_session"),
   SESSION_SECRET: z
     .string()
     .min(16, "SESSION_SECRET must be at least 16 characters")

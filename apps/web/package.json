@@ -1,8 +1,8 @@
 {
-  "name": "@goodsignal/web",
+  "name": "@proofline/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Goodsignal Next.js frontend.",
+  "description": "Proofline Next.js frontend.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
@@ -13,7 +13,7 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
-    "@goodsignal/shared-types": "workspace:*",
+    "@proofline/shared-types": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",

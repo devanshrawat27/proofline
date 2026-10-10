@@ -1,8 +1,8 @@
-# Goodsignal
+# Proofline
 
 > Every delivery. Every discrepancy. Proven.
 
-Goodsignal is an AI-assisted **supplier delivery discrepancy and dispute-resolution**
+Proofline is an AI-assisted **supplier delivery discrepancy and dispute-resolution**
 platform for small and mid-sized wholesalers, distributors and procurement teams.
 It compares what was ordered (purchase order), what actually arrived (receiving
 records) and what was billed (supplier invoice), gathers evidence for every
@@ -28,8 +28,8 @@ mismatch, and tracks resolution through one auditable workflow.
 - Multi-tenant RBAC: role → permission policy (`OWNER`, `PROCUREMENT_MANAGER`, `RECEIVER`, `FINANCE`) enforced by **server-side guards** on every protected route.
 - Organizations: read / update. Members: list, invite, accept invitation.
 - Health (`/health`) and readiness (`/ready`) endpoints; request IDs; standard error shape; Helmet security headers; CORS allowlist; Origin check on state-changing requests.
-- Goodsignal design system (light-first evergreen theme), app shell, landing page, sign-in / sign-up, overview, members, settings.
-- Clearly-labelled **demo** organization seed (`isDemo = true`), separate from production data.
+- Proofline design system (light-first evergreen theme), app shell, landing page, sign-in / sign-up, overview, members, settings.
+- Clearly-labelled **sample** organization seed (`isDemo = true`), separate from production data.
 - CI workflow: install → prisma generate → `migrate deploy` on a clean DB → lint → typecheck → build → test.
 - Unit tests (11 passing) for password hashing and the role/permission policy.
 
@@ -83,29 +83,29 @@ copy .env.example apps\api\.env          # Windows
 #    Create apps/web/.env.local with:
 #      NEXT_PUBLIC_API_URL=http://localhost:4000
 #      API_INTERNAL_URL=http://localhost:4000
-#      SESSION_COOKIE_NAME=goodsignal_session
+#      SESSION_COOKIE_NAME=proofline_session
 
-# 4. Apply database migrations and seed the demo data
+# 4. Apply database migrations and seed the sample data
 pnpm db:migrate
 pnpm db:seed
 
 # 5. Run the apps (in two terminals)
-pnpm --filter @goodsignal/api start:dev   # http://localhost:4000
-pnpm --filter @goodsignal/web dev         # http://localhost:3000
+pnpm --filter @proofline/api start:dev   # http://localhost:4000
+pnpm --filter @proofline/web dev         # http://localhost:3000
 ```
 
-### Demo accounts (non-production seeded environment only)
+### Sample accounts (non-production seeded environment only)
 
-Organization: **Demo Distributors (sample data)** — password for all: `demo-password-123`
+Organization: **Meridian Distributors** — password for all: `Proofline@123`
 
 | Role | Email |
 | --- | --- |
-| Owner | `owner@demo.goodsignal.local` |
-| Procurement Manager | `manager@demo.goodsignal.local` |
-| Receiver | `receiver@demo.goodsignal.local` |
-| Finance | `finance@demo.goodsignal.local` |
+| Owner | `owner@meridian.local` |
+| Procurement Manager | `manager@meridian.local` |
+| Receiver | `receiver@meridian.local` |
+| Finance | `finance@meridian.local` |
 
-> Demo credentials exist only for the seeded, `isDemo` organization and must never be used in production.
+> These accounts exist only for the seeded, `isDemo` organization and must never be used in production.
 
 ---
 
@@ -128,7 +128,7 @@ Secrets are never committed. `.env`, `.env.*` and `.env.local` are gitignored.
 ```bash
 pnpm db:migrate          # prisma migrate dev (create/apply migrations)
 pnpm db:seed             # prisma db seed (loads apps/api/.env)
-pnpm --filter @goodsignal/api prisma:deploy   # apply migrations in CI/production
+pnpm --filter @proofline/api prisma:deploy   # apply migrations in CI/production
 ```
 
 Migrations live in `apps/api/prisma/migrations`.
@@ -184,7 +184,7 @@ docs/
 - Email, queues, object storage and AI extraction are not wired (infra exists in Compose).
 - No integration/E2E tests yet; the CI pipeline runs unit tests.
 - bcrypt is used for portability; Argon2id is a candidate hardening step.
-- The name “Goodsignal” has had only a lightweight web check — **not** trademark,
+- The name “Proofline” has had only a lightweight web check — **not** trademark,
   domain or company-name clearance.
 
 ## Roadmap

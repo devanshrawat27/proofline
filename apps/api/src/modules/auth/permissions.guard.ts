@@ -1,8 +1,8 @@
 import type { CanActivate, ExecutionContext } from "@nestjs/common";
 import { Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { Permission } from "@goodsignal/shared-types";
-import { roleHasPermission } from "@goodsignal/shared-types";
+import type { Permission } from "@proofline/shared-types";
+import { roleHasPermission } from "@proofline/shared-types";
 import { AppError } from "../../common/errors/app-error";
 import { IS_PUBLIC_KEY, PERMISSIONS_KEY } from "../../common/auth/auth.decorators";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";

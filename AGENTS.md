@@ -2,9 +2,9 @@
 
 Guidance for AI coding agents (and humans) working in this repository.
 
-Goodsignal is an AI-assisted **supplier delivery discrepancy and dispute-resolution**
+Proofline is an AI-assisted **supplier delivery discrepancy and dispute-resolution**
 platform. See [`README.md`](./README.md) and the product blueprint
-[`Goodsignal_Product_Blueprint (1).md`](./Goodsignal_Product_Blueprint%20(1).md).
+[`Proofline_Product_Blueprint.md`](./Proofline_Product_Blueprint.md).
 
 **Core rule:** this is built incrementally. Never claim a feature, test, migration
 or deployment works unless it was actually run and verified. Report exact commands
@@ -36,10 +36,10 @@ pnpm test                    # Jest unit tests
 pnpm build                   # nest build + next build
 
 pnpm db:migrate              # prisma migrate dev (api)
-pnpm db:seed                 # prisma db seed (demo data)
+pnpm db:seed                 # prisma db seed (sample data)
 
-pnpm --filter @goodsignal/api start:dev   # API on :4000
-pnpm --filter @goodsignal/web dev         # web on :3000
+pnpm --filter @proofline/api start:dev   # API on :4000
+pnpm --filter @proofline/web dev         # web on :3000
 ```
 
 Always run `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` before
@@ -64,7 +64,7 @@ declaring work complete, and report the results.
 - Frontend: Next.js App Router. Server components fetch via `lib/server-api.ts`
   (forwards the session cookie); client mutations via `lib/api.ts`.
 - Styling: Tailwind with design tokens in `apps/web/tailwind.config.ts`. Follow the
-  Goodsignal palette (evergreen brand, light-first). No purple/blue gradients.
+  Proofline palette (evergreen brand, light-first). No purple/blue gradients.
 - Naming: files `kebab-case`; Prisma tables `snake_case` via `@@map`; API paths
   `/api/v1/...`.
 - Do **not** add comments unless they explain non-obvious intent.
@@ -96,5 +96,5 @@ and `docs/api-contracts.md`.
 
 Phase 1 (foundation) is complete: tenancy, auth, RBAC, organizations, members,
 invitations, health/ready, web shell + landing/auth/overview/members/settings,
-demo seed, CI, docs. Next phases: core operations (suppliers, POs, receiving),
+sample seed, CI, docs. Next phases: core operations (suppliers, POs, receiving),
 document/AI extraction + discrepancy engine, cases + supplier portal, polish.

@@ -17,21 +17,21 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: goodsignal
-          POSTGRES_PASSWORD: goodsignal
-          POSTGRES_DB: goodsignal
+          POSTGRES_USER: proofline
+          POSTGRES_PASSWORD: proofline
+          POSTGRES_DB: proofline
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U goodsignal -d goodsignal"
+          --health-cmd "pg_isready -U proofline -d proofline"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://goodsignal:goodsignal@localhost:5432/goodsignal?schema=public
+      DATABASE_URL: postgresql://proofline:proofline@localhost:5432/proofline?schema=public
       SESSION_SECRET: ci-only-secret-value-not-used-in-production-0000
-      SESSION_COOKIE_NAME: goodsignal_session
+      SESSION_COOKIE_NAME: proofline_session
       NODE_ENV: test
 
     steps:
@@ -50,10 +50,10 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter @goodsignal/api exec prisma generate
+        run: pnpm --filter @proofline/api exec prisma generate
 
       - name: Validate migrations on a clean database
-        run: pnpm --filter @goodsignal/api exec prisma migrate deploy
+        run: pnpm --filter @proofline/api exec prisma migrate deploy
 
       - name: Lint
         run: pnpm lint

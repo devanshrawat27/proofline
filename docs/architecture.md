@@ -2,7 +2,7 @@
 
 ## Shape
 
-Goodsignal is a **modular monolith**. One deployable API process hosts cohesive
+Proofline is a **modular monolith**. One deployable API process hosts cohesive
 modules; a background worker will be added later for document processing and
 email. This favours a small, complete, reliable workflow over microservices.
 

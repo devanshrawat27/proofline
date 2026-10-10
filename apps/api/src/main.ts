@@ -52,7 +52,7 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(env.API_PORT);
   // eslint-disable-next-line no-console
-  console.log(`Goodsignal API listening on ${env.API_PUBLIC_URL} (${env.NODE_ENV})`);
+  console.log(`Proofline API listening on ${env.API_PUBLIC_URL} (${env.NODE_ENV})`);
 }
 
 void bootstrap();

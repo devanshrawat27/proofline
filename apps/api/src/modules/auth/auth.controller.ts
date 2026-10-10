@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
-import { loginSchema, signupSchema } from "@goodsignal/shared-types";
-import type { LoginInput, SignupInput } from "@goodsignal/shared-types";
+import { loginSchema, signupSchema } from "@proofline/shared-types";
+import type { LoginInput, SignupInput } from "@proofline/shared-types";
 import { CurrentUser, Public } from "../../common/auth/auth.decorators";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";
 import { ZodValidationPipe } from "../../common/http/zod-validation.pipe";

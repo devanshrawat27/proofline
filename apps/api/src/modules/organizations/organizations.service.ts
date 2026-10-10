@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { UpdateOrganizationInput } from "@goodsignal/shared-types";
+import type { UpdateOrganizationInput } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
 

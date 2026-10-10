@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { updateOrganizationSchema } from "@goodsignal/shared-types";
+import { updateOrganizationSchema } from "@proofline/shared-types";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FieldError, Label } from "@/components/ui/field";

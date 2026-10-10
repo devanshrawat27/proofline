@@ -1,8 +1,8 @@
 {
-  "name": "@goodsignal/config",
+  "name": "@proofline/config",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared tooling configuration for Goodsignal (prettier, tsconfig).",
+  "description": "Shared tooling configuration for Proofline (prettier, tsconfig).",
   "exports": {
     "./prettier": "./prettier.cjs",
     "./tsconfig.base.json": "./tsconfig.base.json"

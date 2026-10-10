@@ -1,6 +1,6 @@
 import type { ExecutionContext } from "@nestjs/common";
 import type { Reflector } from "@nestjs/core";
-import { roleHasPermission, type OrgRole, type Permission } from "@goodsignal/shared-types";
+import { roleHasPermission, type OrgRole, type Permission } from "@proofline/shared-types";
 import { AppError } from "../errors/app-error";
 import { PermissionsGuard } from "../../modules/auth/permissions.guard";
 import type { AuthenticatedUser } from "./auth.types";

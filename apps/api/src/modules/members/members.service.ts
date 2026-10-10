@@ -4,7 +4,7 @@ import type {
   AcceptInvitationInput,
   InviteMemberInput,
   OrgRole,
-} from "@goodsignal/shared-types";
+} from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
 import { isProduction } from "../../common/config/env";

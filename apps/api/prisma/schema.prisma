@@ -1,4 +1,4 @@
-// Goodsignal — Prisma schema (Phase 1: identity, tenancy, membership).
+// Proofline — Prisma schema (Phase 1: identity, tenancy, membership).
 // Later phases add Supplier, PurchaseOrder, Receipt, Document, Invoice,
 // Discrepancy, DisputeCase, Resolution, Notification and AuditEvent.
 

@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { Injectable, Logger } from "@nestjs/common";
-import type { OrgRole } from "@goodsignal/shared-types";
+import type { OrgRole } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";
 import { env } from "../../common/config/env";

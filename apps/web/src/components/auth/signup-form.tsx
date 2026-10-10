@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signupSchema } from "@goodsignal/shared-types";
+import { signupSchema } from "@proofline/shared-types";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FieldError, Label } from "@/components/ui/field";

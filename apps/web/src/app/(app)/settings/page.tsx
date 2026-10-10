@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { roleHasPermission } from "@goodsignal/shared-types";
+import { roleHasPermission } from "@proofline/shared-types";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { OrganizationForm } from "@/components/settings/organization-form";
 import { getSessionContext, serverGet } from "@/lib/server-api";
 
-export const metadata: Metadata = { title: "Settings — Goodsignal" };
+export const metadata: Metadata = { title: "Settings — Proofline" };
 export const dynamic = "force-dynamic";
 
 interface OrganizationRow {

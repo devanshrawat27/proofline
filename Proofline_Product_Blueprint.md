@@ -1,4 +1,4 @@
-# Goodsignal — Product Blueprint & Production-Minded Engineering Specification
+# Proofline — Product Blueprint & Production-Minded Engineering Specification
 > **Purpose:** This document is the single source of truth for an AI-assisted supplier delivery discrepancy and dispute-resolution platform. Give it to the coding agent before asking it to implement anything.
 >
 > **Product ambition:** Production-minded, secure, polished, testable, and deployable—not a generic dashboard mockup.
@@ -9,16 +9,16 @@
 
 ## 1. Product Summary
 
-**Product name:** Goodsignal  
+**Product name:** Proofline  
 **Tagline:** Every delivery. Every discrepancy. Proven.  
 **Category:** B2B SaaS / supplier delivery exception management  
 **Initial target market:** Small and mid-sized wholesalers, distributors, and procurement teams that coordinate purchase orders, receiving records, invoices, photos, and supplier follow-ups across spreadsheets, email, and messaging apps.
 
 ### One-line pitch
-Goodsignal helps businesses record what they ordered, what actually arrived, what was billed, gather evidence for discrepancies, and resolve supplier cases through one auditable workflow—using AI to assist with document extraction and explanation, while deterministic code controls calculations and approvals.
+Proofline helps businesses record what they ordered, what actually arrived, what was billed, gather evidence for discrepancies, and resolve supplier cases through one auditable workflow—using AI to assist with document extraction and explanation, while deterministic code controls calculations and approvals.
 
 ### Example
-A buyer orders 100 LED drivers at ₹500 each. A receiver records 94 received and marks 2 of those as damaged. The supplier invoice bills 100. Goodsignal compares the purchase order, receipt, and invoice, flags the quantity mismatch, keeps damage evidence attached, creates a case for review, and tracks whether the supplier proposes a replacement or credit.
+A buyer orders 100 LED drivers at ₹500 each. A receiver records 94 received and marks 2 of those as damaged. The supplier invoice bills 100. Proofline compares the purchase order, receipt, and invoice, flags the quantity mismatch, keeps damage evidence attached, creates a case for review, and tracks whether the supplier proposes a replacement or credit.
 
 **Do not silently assume all discrepancies are supplier fault.** Partial deliveries, receiving mistakes, invoice timing, unit-of-measure differences, substitutions, and damaged goods can have different explanations. The platform must preserve evidence and let authorized humans decide.
 
@@ -26,7 +26,7 @@ A buyer orders 100 LED drivers at ₹500 each. A receiver records 94 received an
 
 ## 2. Market & Competition
 
-The broad category is **not new**. Do not market Goodsignal as the first or only product to solve receiving discrepancies.
+The broad category is **not new**. Do not market Proofline as the first or only product to solve receiving discrepancies.
 
 ### Known adjacent / competing products to research
 - **Kissflow — GRN Discrepancy & Exception Resolution:** Covers receiving discrepancy workflows, matching, vendor communication, resolution, and audit trails. This is a close functional competitor.
@@ -44,7 +44,7 @@ The broad category is **not new**. Do not market Goodsignal as the first or only
 4. Treat differentiation as a **hypothesis to validate**, not established market truth.
 
 ### Brand direction and naming status
-**Chosen working brand: Goodsignal** (wordmark may be styled as `goodsignal`). The name suggests a clear operational signal when a delivery, invoice, or receiving record does not line up. Avoid freight-port imagery; the product is an evidence and resolution workspace, not a shipping company.
+**Chosen working brand: Proofline** (wordmark may be styled as `proofline`). The name suggests a clear operational signal when a delivery, invoice, or receiving record does not line up. Avoid freight-port imagery; the product is an evidence and resolution workspace, not a shipping company.
 
 **Tagline:** “Every delivery. Every discrepancy. Proven.”
 
@@ -677,7 +677,7 @@ At the end of every phase: run checks, fix failures, summarize changed files, li
 ## 15. Brand, Visual Design System & Frontend Direction
 
 ### 15.1 Product experience concept
-Design Goodsignal as an **evidence-first operations command center**. It should feel like a premium modern B2B SaaS product: confident, data-dense where needed, calm under pressure, and much more polished than a generic admin template.
+Design Proofline as an **evidence-first operations command center**. It should feel like a premium modern B2B SaaS product: confident, data-dense where needed, calm under pressure, and much more polished than a generic admin template.
 
 The product must communicate three things visually:
 1. **What does not match?** Make exceptions visible immediately without turning every page into a red-alert dashboard.
@@ -687,7 +687,7 @@ The product must communicate three things visually:
 Avoid designing this as a generic “AI SaaS” site with a chatbot occupying the main screen, giant gradients, random glass cards, glowing orbs, or charts that do not answer a business question. The interface is an operational tool; clarity and trust come first.
 
 ### 15.2 Brand identity
-- **Name:** Goodsignal (lowercase wordmark `goodsignal` is acceptable if it looks better in the header)
+- **Name:** Proofline (lowercase wordmark `proofline` is acceptable if it looks better in the header)
 - **Tagline:** “Every delivery. Every discrepancy. Proven.”
 - **Brand attributes:** precise, trustworthy, helpful, evidence-led, operational, modern.
 - **Suggested logo direction:** a simple geometric mark combining a check/receipt corner with a small signal/ripple motif. It must work as a 16px sidebar icon, monochrome favicon, and full wordmark. Do not use trucks, ships, boxes-with-arrows, robots, or generic AI sparkles as the main logo.
@@ -875,7 +875,7 @@ For portfolio presentation, demonstrate a complete case from purchase order to v
 
 ## 18. Instructions to the Coding Agent
 
-You are the senior full-stack engineer responsible for delivering Goodsignal.
+You are the senior full-stack engineer responsible for delivering Proofline.
 
 1. Read this entire specification and inspect the repository before editing.
 2. Treat this file as product requirements; if repository conventions conflict, explain the conflict and preserve working architecture unless a change is necessary.
@@ -889,7 +889,7 @@ You are the senior full-stack engineer responsible for delivering Goodsignal.
 10. Do not claim “production-ready,” “secure,” “fully tested,” or “deployed” unless the corresponding checks were actually completed; list remaining gaps explicitly.
 11. Avoid unnecessary dependencies and premature microservices. Prefer a maintainable modular monolith for the MVP.
 12. Preserve existing useful code and design conventions. Do not modify unrelated projects or features.
-12a. Implement the Goodsignal visual system and signature screens in Section 15. Inspect existing UI before changes; do not settle for generic admin-template styling.
+12a. Implement the Proofline visual system and signature screens in Section 15. Inspect existing UI before changes; do not settle for generic admin-template styling.
 12b. Do not generate polished static screens that are disconnected from real APIs or backend state; wire each implemented workflow end-to-end.
 13. At every milestone, report: **Done**, **Verified**, **Not done / blockers**, **Risks**, and **Next step**.
 14. Prioritize a small, complete, reliable workflow over a large set of shallow or broken features.

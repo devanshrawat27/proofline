@@ -2,7 +2,7 @@ import type { ArgumentsHost, ExceptionFilter } from "@nestjs/common";
 import { Catch, HttpException, Logger } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { ZodError } from "zod";
-import type { ApiErrorBody } from "@goodsignal/shared-types";
+import type { ApiErrorBody } from "@proofline/shared-types";
 import { AppError } from "../errors/app-error";
 
 @Catch()

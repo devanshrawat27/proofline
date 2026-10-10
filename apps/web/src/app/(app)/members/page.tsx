@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { roleHasPermission, type OrgRole } from "@goodsignal/shared-types";
+import { roleHasPermission, type OrgRole } from "@proofline/shared-types";
 import { Alert } from "@/components/ui/alert";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState, PageHeader } from "@/components/ui/page-header";
@@ -8,7 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { InviteMemberForm } from "@/components/members/invite-member-form";
 import { getSessionContext, serverGet } from "@/lib/server-api";
 
-export const metadata: Metadata = { title: "Members & roles — Goodsignal" };
+export const metadata: Metadata = { title: "Members & roles — Proofline" };
 export const dynamic = "force-dynamic";
 
 interface MemberRow {

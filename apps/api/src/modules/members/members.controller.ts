@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
-import { acceptInvitationSchema, inviteMemberSchema } from "@goodsignal/shared-types";
-import type { AcceptInvitationInput, InviteMemberInput } from "@goodsignal/shared-types";
+import { acceptInvitationSchema, inviteMemberSchema } from "@proofline/shared-types";
+import type { AcceptInvitationInput, InviteMemberInput } from "@proofline/shared-types";
 import { CurrentUser, Public, RequirePermissions } from "../../common/auth/auth.decorators";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";
 import { ZodValidationPipe } from "../../common/http/zod-validation.pipe";

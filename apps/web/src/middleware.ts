@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "goodsignal_session";
+const COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "proofline_session";
 
 const PROTECTED_PREFIXES = [
   "/overview",

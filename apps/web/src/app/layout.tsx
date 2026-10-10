@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Goodsignal — Every delivery. Every discrepancy. Proven.",
+  title: "Proofline — Every delivery. Every discrepancy. Proven.",
   description:
     "Compare purchase orders, receiving records, and supplier invoices. Turn mismatches into evidence-backed cases your team can close.",
 };
