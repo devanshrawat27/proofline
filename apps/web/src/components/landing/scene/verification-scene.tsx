@@ -3,27 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { FileText, PackageCheck, ReceiptText } from "lucide-react";
-import { DocCard, MarkerDot, ValueRow } from "./scene-cards";
+import { DocCard, DocLine, MismatchPanel } from "./scene-cards";
 import { SceneBackdrop } from "./scene-fallback";
 
-const VerificationCanvas = dynamic<{ active?: boolean }>(
-  () => import("./verification-canvas"),
-  { ssr: false, loading: () => null },
-);
+const HeroCanvas = dynamic<{ active?: boolean }>(() => import("./verification-canvas"), {
+  ssr: false,
+  loading: () => null,
+});
 
 function hasWebGL(): boolean {
   try {
     const canvas = document.createElement("canvas");
     return Boolean(
-      window.WebGLRenderingContext &&
-        (canvas.getContext("webgl2") || canvas.getContext("webgl")),
+      window.WebGLRenderingContext && (canvas.getContext("webgl2") || canvas.getContext("webgl")),
     );
   } catch {
     return false;
   }
 }
 
-export function VerificationScene() {
+export function HeroReconciliationScene() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [use3d, setUse3d] = useState(false);
   const [active, setActive] = useState(true);
@@ -50,93 +49,74 @@ export function VerificationScene() {
     };
   }, []);
 
-  return (
-    <div ref={containerRef}>
-      {use3d ? <OverlayLayout active={active} /> : <StaticLayout />}
-    </div>
-  );
+  return <div ref={containerRef}>{use3d ? <OverlayLayout active={active} /> : <StaticLayout />}</div>;
 }
 
 function OverlayLayout({ active }: { active: boolean }) {
   return (
     <div
-      className="relative h-[500px] w-full overflow-hidden rounded-3xl border border-line shadow-scene lg:h-[560px]"
+      className="relative h-[500px] w-full lg:h-[540px]"
       role="img"
-      aria-label="Illustration comparing a purchase order, receiving record and supplier invoice for the same delivery"
+      aria-label="A delivered parcel reconciled against a purchase order, receiving record and supplier invoice, showing an AI-detected quantity mismatch"
     >
-      <SceneBackdrop />
+      <SceneBackdrop showCrate={false} />
+      <div className="absolute inset-x-6 inset-y-2 sm:inset-x-12">
+        <HeroCanvas active={active} />
+      </div>
 
-      <VerificationCanvas active={active} />
-
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden
-      >
-        <g
-          fill="none"
-          stroke="#176b52"
-          strokeWidth="0.25"
-          strokeOpacity="0.35"
-          className="motion-safe:animate-dash"
-        >
-          <path d="M20 20 C 34 30, 42 42, 50 50" strokeDasharray="1.6 1.8" />
-          <path d="M24 82 C 36 72, 44 60, 50 50" strokeDasharray="1.6 1.8" />
-          <path d="M82 28 C 70 36, 60 44, 50 50" strokeDasharray="1.6 1.8" />
-        </g>
-      </svg>
-
-      <span className="absolute right-3 top-3 rounded-full border border-line bg-surface/80 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-subtle backdrop-blur">
-        Example data
-      </span>
+      {/* Purposeful sweep: records are scanned, then the mismatch is surfaced. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(214,243,106,0.14),transparent)] bg-[length:100%_34%] bg-no-repeat motion-safe:animate-sweep" />
+      </div>
 
       <DocCard
         title="Purchase Order"
+        reference="PO-1042"
         icon={FileText}
         position="overlay"
-        delay={0}
-        className="absolute left-4 top-[8%] w-[196px]"
+        className="absolute left-2 top-[6%] w-[196px] sm:left-4"
       >
-        <ValueRow label="Ordered" value="100" />
-      </DocCard>
-
-      <DocCard
-        title="Receiving Record"
-        icon={PackageCheck}
-        position="overlay"
-        delay={0.5}
-        className="absolute bottom-[10%] left-8 w-[210px]"
-      >
-        <div className="space-y-2">
-          <ValueRow label="Received" value="94" />
-          <ValueRow label="Damaged" value="2" hint="of received" />
-        </div>
+        <DocLine name="LED Driver 12W" qty="100 pcs" price="₹500" />
       </DocCard>
 
       <DocCard
         title="Supplier Invoice"
+        reference="INV-5562"
         icon={ReceiptText}
         position="overlay"
-        delay={1}
-        className="absolute right-4 top-[17%] w-[196px]"
+        delay={0.6}
+        className="absolute bottom-[10%] left-4 w-[204px] sm:left-8"
       >
-        <ValueRow label="Invoiced" value="100" />
+        <div className="space-y-1.5">
+          <DocLine name="LED Driver 12W" qty="100 pcs" price="₹500" />
+          <div className="flex items-center justify-between border-t border-line pt-1.5 text-[11px]">
+            <span className="text-subtle">Total</span>
+            <span className="text-sm font-semibold tabular-nums text-ink">₹50,000</span>
+          </div>
+        </div>
       </DocCard>
 
-      <MarkerDot
-        label="6 units unaccounted"
-        tone="amber"
-        className="absolute left-[40%] top-[46%] -translate-x-1/2"
-      />
-      <MarkerDot label="Evidence linked" tone="green" className="absolute bottom-[26%] right-[12%]" />
+      <DocCard
+        title="Receiving Record"
+        reference="REC-7781"
+        icon={PackageCheck}
+        position="overlay"
+        delay={1.2}
+        className="absolute right-2 top-[6%] w-[196px] sm:right-4"
+      >
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-subtle">Received</span>
+            <span className="font-medium tabular-nums text-ink">94</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-subtle">Damaged</span>
+            <span className="font-medium tabular-nums text-critical">2 pcs</span>
+          </div>
+        </div>
+      </DocCard>
 
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
-        <span className="inline-flex items-center gap-2 rounded-full border border-warn/20 bg-warn-surface px-3 py-1 text-xs font-medium text-warn shadow-card">
-          <span className="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden />
-          Review required
-        </span>
-      </div>
+      <MismatchPanel className="absolute bottom-[10%] right-2 w-[228px] sm:right-4" />
     </div>
   );
 }
@@ -144,41 +124,46 @@ function OverlayLayout({ active }: { active: boolean }) {
 function StaticLayout() {
   return (
     <div
-      className="relative overflow-hidden rounded-3xl border border-line bg-surface shadow-scene"
+      className="relative overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
       role="img"
-      aria-label="Illustration comparing a purchase order, receiving record and supplier invoice for the same delivery"
+      aria-label="A delivered parcel reconciled against a purchase order, receiving record and supplier invoice, showing an AI-detected quantity mismatch"
     >
-      <div className="relative h-44 sm:h-52">
+      <div className="relative h-48 sm:h-56">
         <SceneBackdrop />
-        <span className="absolute right-3 top-3 rounded-full border border-line bg-surface/80 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-subtle backdrop-blur">
+        <span className="absolute left-3 top-3 rounded-full border border-line bg-surface/80 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-subtle backdrop-blur">
           Example data
         </span>
       </div>
 
       <div className="grid gap-3 p-4 sm:grid-cols-3">
-        <DocCard title="Purchase Order" icon={FileText} position="stack">
-          <ValueRow label="Ordered" value="100" />
+        <DocCard title="Purchase Order" reference="PO-1042" icon={FileText} position="stack">
+          <DocLine name="LED Driver 12W" qty="100 pcs" price="₹500" />
         </DocCard>
-        <DocCard title="Receiving Record" icon={PackageCheck} position="stack">
-          <div className="space-y-2">
-            <ValueRow label="Received" value="94" />
-            <ValueRow label="Damaged" value="2" hint="of received" />
+        <DocCard title="Receiving Record" reference="REC-7781" icon={PackageCheck} position="stack">
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-subtle">Received</span>
+              <span className="font-medium tabular-nums text-ink">94</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-subtle">Damaged</span>
+              <span className="font-medium tabular-nums text-critical">2 pcs</span>
+            </div>
           </div>
         </DocCard>
-        <DocCard title="Supplier Invoice" icon={ReceiptText} position="stack">
-          <ValueRow label="Invoiced" value="100" />
+        <DocCard title="Supplier Invoice" reference="INV-5562" icon={ReceiptText} position="stack">
+          <div className="space-y-1.5">
+            <DocLine name="LED Driver 12W" qty="100 pcs" price="₹500" />
+            <div className="flex items-center justify-between border-t border-line pt-1.5 text-[11px]">
+              <span className="text-subtle">Total</span>
+              <span className="text-sm font-semibold tabular-nums text-ink">₹50,000</span>
+            </div>
+          </div>
         </DocCard>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
-        <div className="flex flex-wrap items-center gap-4">
-          <MarkerDot label="6 units unaccounted" tone="amber" />
-          <MarkerDot label="Evidence linked" tone="green" />
-        </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-warn/20 bg-warn-surface px-3 py-1 text-xs font-medium text-warn">
-          <span className="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden />
-          Review required
-        </span>
+      <div className="px-4 pb-4">
+        <MismatchPanel />
       </div>
     </div>
   );

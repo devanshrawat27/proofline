@@ -37,3 +37,11 @@ test-results/
 # Uploads / local object storage
 uploads/
 .local-storage/
+
+# Large design source / reference assets (kept locally, not committed)
+Proofline_Design_References.zip
+Proofline_Design_References/
+Neon Document Scan Stack.png
+Neon Document Sync Network.png
+Resolved Supplier Dashboard Card.png
+Shipping Box and Barcode Scanner Scan.png

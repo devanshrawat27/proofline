@@ -15,6 +15,12 @@ const config: Config = {
           tint: "#E8F4EE",
           lime: "#D6F36A",
         },
+        olive: "#6B7A2E",
+        night: {
+          DEFAULT: "#07130E",
+          soft: "#0B231A",
+          line: "#1B3A2C",
+        },
         line: "#E1E7E2",
         warn: { DEFAULT: "#A85D10", surface: "#FBF3E6" },
         critical: { DEFAULT: "#B42318", surface: "#FDECEA" },
@@ -57,6 +63,13 @@ const config: Config = {
           "82%": { opacity: "0" },
           "100%": { transform: "translateY(140%)", opacity: "0" },
         },
+        sweep: {
+          "0%": { backgroundPositionY: "-45%", opacity: "0" },
+          "12%": { opacity: "1" },
+          "70%": { opacity: "1" },
+          "85%": { opacity: "0" },
+          "100%": { backgroundPositionY: "145%", opacity: "0" },
+        },
         floaty: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
@@ -71,6 +84,7 @@ const config: Config = {
       },
       animation: {
         scan: "scan 6.5s ease-in-out infinite",
+        sweep: "sweep 9s ease-in-out infinite",
         floaty: "floaty 6.5s ease-in-out infinite",
         "floaty-slow": "floaty 8.5s ease-in-out infinite",
         dash: "dash 1.4s linear infinite",
