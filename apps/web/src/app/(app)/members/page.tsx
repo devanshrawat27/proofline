@@ -8,7 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { InviteMemberForm } from "@/components/members/invite-member-form";
 import { getSessionContext, serverGet } from "@/lib/server-api";
 
-export const metadata: Metadata = { title: "Members & roles — Proofline" };
+export const metadata: Metadata = { title: "Members & roles" };
 export const dynamic = "force-dynamic";
 
 interface MemberRow {

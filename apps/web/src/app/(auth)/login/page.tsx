@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
 import { getSessionContext } from "@/lib/server-api";
 
-export const metadata: Metadata = { title: "Sign in — Proofline" };
+export const metadata: Metadata = { title: "Sign in" };
 
 export default async function LoginPage() {
   const session = await getSessionContext();

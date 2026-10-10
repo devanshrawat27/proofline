@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { OrganizationForm } from "@/components/settings/organization-form";
 import { getSessionContext, serverGet } from "@/lib/server-api";
 
-export const metadata: Metadata = { title: "Settings — Proofline" };
+export const metadata: Metadata = { title: "Settings" };
 export const dynamic = "force-dynamic";
 
 interface OrganizationRow {

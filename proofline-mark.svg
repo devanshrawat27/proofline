@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Proofline mark</title>
+  <desc id="desc">Rounded forest-green tile with a verified document and lime checkmark.</desc>
+  <rect x="4" y="4" width="48" height="48" rx="14" fill="#0D4938"/>
+  <path d="M18.5 12.5H30.2L36 18.3V38.5C36 39.3 35.3 40 34.5 40H18.5C17.7 40 17 39.3 17 38.5V14C17 13.2 17.7 12.5 18.5 12.5Z" stroke="#F7FAF7" stroke-width="1.9" stroke-linejoin="round"/>
+  <path d="M29.8 13V18.7H35.5" stroke="#F7FAF7" stroke-width="1.9" stroke-linejoin="round"/>
+  <path d="M21 22.2H29.2M21 26.5H27" stroke="#C7D8D0" stroke-width="1.9" stroke-linecap="round"/>
+  <path d="M21 32L24.2 35L31.2 28.3" stroke="#D7F36A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

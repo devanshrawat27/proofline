@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { SignupForm } from "@/components/auth/signup-form";
 import { getSessionContext } from "@/lib/server-api";
 
-export const metadata: Metadata = { title: "Create your organization — Proofline" };
+export const metadata: Metadata = { title: "Create your organization" };
 
 export default async function SignupPage() {
   const session = await getSessionContext();

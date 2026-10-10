@@ -65,7 +65,7 @@ export function ShellChrome({
       <aside className="hidden w-[248px] shrink-0 border-r border-line bg-surface md:flex md:flex-col">
         <div className="flex h-16 items-center gap-2 px-5">
           <LogoMark className="h-6 w-6" />
-          <span className="text-sm font-semibold tracking-tight text-ink">proofline</span>
+          <span className="text-sm font-semibold tracking-tight text-ink">Proofline</span>
         </div>
         <nav className="flex-1 space-y-0.5 px-3 py-2" aria-label="Primary">
           {NAV.map((item) => {
