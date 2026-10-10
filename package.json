@@ -1,0 +1,37 @@
+{
+  "name": "goodsignal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Goodsignal — every delivery. Every discrepancy. Proven.",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm --filter @goodsignal/shared-types build && pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "dev:infra": "docker compose -f infra/docker-compose.yml up -d",
+    "dev:infra:down": "docker compose -f infra/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @goodsignal/api prisma:migrate",
+    "db:seed": "pnpm --filter @goodsignal/api prisma:seed"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "unrs-resolver"
+    ]
+  },
+  "prettier": "@goodsignal/config/prettier"
+}

@@ -1,0 +1,18 @@
+export * from "./roles";
+export * from "./auth";
+
+/** Standard API error shape returned by the Nest API. */
+export interface ApiErrorBody {
+  statusCode: number;
+  code: string;
+  message: string;
+  details?: unknown;
+  requestId?: string;
+}
+
+export interface Paginated<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

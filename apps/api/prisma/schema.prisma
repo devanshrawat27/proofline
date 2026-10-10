@@ -1,0 +1,118 @@
+// Goodsignal — Prisma schema (Phase 1: identity, tenancy, membership).
+// Later phases add Supplier, PurchaseOrder, Receipt, Document, Invoice,
+// Discrepancy, DisputeCase, Resolution, Notification and AuditEvent.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrgRole {
+  OWNER
+  PROCUREMENT_MANAGER
+  RECEIVER
+  FINANCE
+}
+
+enum MembershipStatus {
+  INVITED
+  ACTIVE
+  DEACTIVATED
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+model Organization {
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String
+  slug            String   @unique
+  timezone        String   @default("Asia/Kolkata")
+  defaultCurrency String   @default("INR") @db.VarChar(3)
+  // Marks a clearly-labelled demo organization; never mixed with production.
+  isDemo          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  members     OrganizationMember[]
+  invitations Invitation[]
+
+  @@map("organizations")
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  email        String     @unique
+  name         String
+  passwordHash String
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  memberships OrganizationMember[]
+  sessions    Session[]
+
+  @@map("users")
+}
+
+model OrganizationMember {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  userId         String           @db.Uuid
+  role           OrgRole
+  status         MembershipStatus @default(ACTIVE)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("organization_members")
+}
+
+model Session {
+  id                   String    @id @default(uuid()) @db.Uuid
+  userId               String    @db.Uuid
+  tokenHash            String    @unique
+  // MVP: one active organization per session; keeps the data model extensible.
+  activeOrganizationId String?   @db.Uuid
+  expiresAt            DateTime
+  createdAt            DateTime  @default(now())
+  lastUsedAt           DateTime?
+  userAgent            String?
+  ipAddress            String?
+  revokedAt            DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Invitation {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @db.Uuid
+  email           String
+  role            OrgRole
+  tokenHash       String    @unique
+  invitedByUserId String    @db.Uuid
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitations")
+}
