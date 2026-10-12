@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   LogOut,
   PackageCheck,
+  ReceiptText,
   Settings,
   Users,
 } from "lucide-react";
@@ -29,10 +30,11 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { href: "/overview", label: "Overview", icon: LayoutDashboard },
-  { href: "/exceptions", label: "Exceptions", icon: AlertTriangle, disabled: true },
-  { href: "/purchase-orders", label: "Purchase Orders", icon: FileText, disabled: true },
-  { href: "/receiving", label: "Receiving", icon: PackageCheck, disabled: true },
-  { href: "/suppliers", label: "Suppliers", icon: Building2, disabled: true },
+  { href: "/exceptions", label: "Exceptions", icon: AlertTriangle },
+  { href: "/purchase-orders", label: "Purchase Orders", icon: FileText },
+  { href: "/receiving", label: "Receiving", icon: PackageCheck },
+  { href: "/invoices", label: "Invoices", icon: ReceiptText },
+  { href: "/suppliers", label: "Suppliers", icon: Building2 },
   { href: "/documents", label: "Documents", icon: FolderOpen, disabled: true },
   { href: "/reports", label: "Reports", icon: BarChart3, disabled: true },
   { href: "/members", label: "Members & roles", icon: Users },

@@ -6,6 +6,11 @@ import { SessionAuthGuard } from "./modules/auth/session-auth.guard";
 import { PermissionsGuard } from "./modules/auth/permissions.guard";
 import { OrganizationsModule } from "./modules/organizations/organizations.module";
 import { MembersModule } from "./modules/members/members.module";
+import { SuppliersModule } from "./modules/suppliers/suppliers.module";
+import { PurchaseOrdersModule } from "./modules/purchase-orders/purchase-orders.module";
+import { ReceiptsModule } from "./modules/receipts/receipts.module";
+import { InvoicesModule } from "./modules/invoices/invoices.module";
+import { DiscrepanciesModule } from "./modules/discrepancies/discrepancies.module";
 import { HealthModule } from "./modules/health/health.module";
 
 @Module({
@@ -14,6 +19,11 @@ import { HealthModule } from "./modules/health/health.module";
     AuthModule,
     OrganizationsModule,
     MembersModule,
+    SuppliersModule,
+    PurchaseOrdersModule,
+    ReceiptsModule,
+    InvoicesModule,
+    DiscrepanciesModule,
     HealthModule,
   ],
   providers: [

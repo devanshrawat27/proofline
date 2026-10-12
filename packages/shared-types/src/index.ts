@@ -1,5 +1,9 @@
 export * from "./roles";
 export * from "./auth";
+export * from "./suppliers";
+export * from "./purchase-orders";
+export * from "./receipts";
+export * from "./invoices";
 
 /** Standard API error shape returned by the Nest API. */
 export interface ApiErrorBody {

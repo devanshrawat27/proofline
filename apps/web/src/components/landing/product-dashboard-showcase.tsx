@@ -80,8 +80,8 @@ function Sparkline({ bars }: { bars: number[] }) {
       {bars.map((height, index) => (
         <span
           key={index}
-          className={cn("w-1.5 rounded-full", index >= bars.length - 2 ? "bg-brand" : "bg-brand/25")}
-          style={{ height: `${height}px` }}
+          className={cn("w-1 rounded-full", index >= bars.length - 2 ? "bg-brand" : "bg-brand/25")}
+          style={{ height: `${Math.round(height * 0.7)}px` }}
         />
       ))}
     </div>
@@ -139,7 +139,7 @@ function DashboardMock() {
           </aside>
 
           {/* Main */}
-          <div className="min-w-0 flex-1 p-4">
+          <div className="min-w-0 flex-1 p-4 pb-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-base font-semibold text-ink">Discrepancy Cases</h3>
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-white">
@@ -197,10 +197,10 @@ function DashboardMock() {
               {kpis.map((kpi) => (
                 <div key={kpi.label} className="rounded-xl border border-line bg-surface p-3">
                   <p className="text-[10px] uppercase tracking-wide text-subtle">{kpi.label}</p>
-                  <div className="mt-1 flex items-end justify-between">
-                    <div>
-                      <p className="text-lg font-semibold tabular-nums text-ink">{kpi.value}</p>
-                      <p className={cn("text-[10px] font-medium", kpi.delta.startsWith("-") ? "text-success" : "text-brand")}>
+                  <div className="mt-1 flex items-end justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="whitespace-nowrap text-base font-semibold tabular-nums leading-tight text-ink">{kpi.value}</p>
+                      <p className={cn("mt-0.5 text-[10px] font-medium", kpi.delta.startsWith("-") ? "text-success" : "text-brand")}>
                         {kpi.delta}
                       </p>
                     </div>
@@ -211,10 +211,6 @@ function DashboardMock() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="border-t border-line bg-app/60 px-4 py-2 text-right text-[10px] font-medium uppercase tracking-wide text-subtle">
-        Example data
       </div>
     </div>
   );

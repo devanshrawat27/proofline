@@ -38,8 +38,8 @@ export const metadata: Metadata = {
       "Compare what was ordered, what arrived, and what was billed. Turn mismatches into evidence-backed cases.",
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icon.svg" }],
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/icon.png" }],
   },
   robots: { index: true, follow: true },
 };

@@ -13,11 +13,41 @@ Source of truth: [`apps/api/prisma/schema.prisma`](../apps/api/prisma/schema.pri
 Conventions: UUID primary keys (`@db.Uuid`), timestamps, foreign keys with
 explicit `onDelete`, indexes on tenant and lookup columns, `snake_case` table names.
 
+## Implemented (Phase 2, in progress)
+
+- **Supplier** — organization, `code` (unique per organization, stored uppercase), display name,
+  optional contact person/email/phone, GSTIN/tax id, address fields, country (default `IN`),
+  notes, status (`ACTIVE | INACTIVE`), timestamps.
+- **PurchaseOrder** — organization, supplier, `poNumber` (unique per organization, uppercase),
+  status (`DRAFT | ISSUED | PARTIALLY_RECEIVED | FULLY_RECEIVED | CANCELLED | CLOSED`), currency,
+  issue/expected dates, notes, `totalMinor` (integer paise), `version`, timestamps.
+- **PurchaseOrderLine** — PO, `lineNumber` (unique per PO), optional SKU, description,
+  `orderedQuantity` (Decimal(14,3)), unit, `unitPriceMinor` (integer paise), `lineTotalMinor`.
+- **Receipt** — organization, PO, receiver, optional delivery reference, notes, status
+  (`DRAFT | SUBMITTED`), received/submitted timestamps.
+- **ReceiptLine** — receipt, PO line (unique per receipt), `receivedQuantity` and
+  `damagedQuantity` (Decimal(14,3)). Accepted quantity is computed as received − damaged;
+  damaged must never exceed received (validated by the shared schema).
+- **Invoice** — organization, supplier, optional PO, `invoiceNumber` (unique per organization,
+  uppercase), status (`DRAFT | REVIEWED`), currency, date, notes, `totalMinor` (integer paise).
+- **InvoiceLine** — invoice, optional matched PO line, description, `quantity` (Decimal(14,3)),
+  unit, `unitPriceMinor`, `lineTotalMinor`.
+- **Discrepancy** — organization, PO, optional invoice and PO line, `type`
+  (`QUANTITY_MISMATCH | OVER_DELIVERY | UNIT_PRICE_MISMATCH | DAMAGED_GOODS | UNMATCHED_LINE`),
+  `severity` (`LOW | MEDIUM | HIGH`), `status` (`OPEN | DISMISSED | RESOLVED`), `explanation`,
+  `expectedValue`, `actualValue`.
+
+Money is stored as integer minor units (paise); quantities use a decimal type. Line totals are
+computed deterministically on the server (`round(quantity × unitPriceMinor)`). On receipt
+submission the server recomputes the PO status (`PARTIALLY_RECEIVED` / `FULLY_RECEIVED`) from
+the sum of submitted receipts. On invoice review the server recomputes the invoice's
+discrepancies deterministically (no AI): billed vs received quantity, over-delivery, unit-price
+deltas, damaged goods and unmatched lines.
+
 ## Planned (later phases)
 
-Supplier, SupplierUser, PurchaseOrder, PurchaseOrderLine, Receipt, ReceiptLine,
-Document, DocumentExtraction, Invoice, InvoiceLine, Discrepancy, DisputeCase,
-DisputeCaseItem, CaseMessage, CaseEvent, Resolution, Notification, AuditEvent.
+SupplierUser, Document, DocumentExtraction, CaseMessage, DisputeCase, DisputeCaseItem,
+CaseEvent, Resolution, Notification, AuditEvent.
 
 ## Integrity rules (applied now and enforced going forward)
 

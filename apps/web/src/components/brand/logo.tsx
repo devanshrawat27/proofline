@@ -1,47 +1,24 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-/**
- * Crisp, scalable Proofline mark: a verified document on a forest tile.
- * Rendered as inline SVG so it stays sharp at favicon and navbar sizes.
- */
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 56 56"
-      role="img"
+    <Image
+      src="/brand/proofline-logo.png"
+      alt=""
+      width={96}
+      height={96}
+      priority
       aria-hidden
-      className={cn("h-7 w-7", className)}
-      fill="none"
-    >
-      <rect x="4" y="4" width="48" height="48" rx="14" fill="#0D4938" />
-      <path
-        d="M18.5 12.5H30.2L36 18.3V38.5C36 39.3 35.3 40 34.5 40H18.5C17.7 40 17 39.3 17 38.5V14C17 13.2 17.7 12.5 18.5 12.5Z"
-        stroke="#F7FAF7"
-        strokeWidth="1.9"
-        strokeLinejoin="round"
-      />
-      <path d="M29.8 13V18.7H35.5" stroke="#F7FAF7" strokeWidth="1.9" strokeLinejoin="round" />
-      <path
-        d="M21 22.2H29.2M21 26.5H27"
-        stroke="#C7D8D0"
-        strokeWidth="1.9"
-        strokeLinecap="round"
-      />
-      <path
-        d="M21 32L24.2 35L31.2 28.3"
-        stroke="#D7F36A"
-        strokeWidth="2.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      className={cn("h-9 w-9 object-contain", className)}
+    />
   );
 }
 
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark className="h-9 w-9" />
+      <LogoMark />
       <span className="text-lg font-semibold tracking-tight text-ink">Proofline</span>
     </span>
   );

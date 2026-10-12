@@ -1,6 +1,7 @@
-// Proofline — Prisma schema (Phase 1: identity, tenancy, membership).
-// Later phases add Supplier, PurchaseOrder, Receipt, Document, Invoice,
-// Discrepancy, DisputeCase, Resolution, Notification and AuditEvent.
+// Proofline — Prisma schema.
+// Phase 1: identity, tenancy, membership. Phase 2: suppliers (in progress).
+// Later phases add PurchaseOrder, Receipt, Document, Invoice, Discrepancy,
+// DisputeCase, Resolution, Notification and AuditEvent.
 
 generator client {
   provider = "prisma-client-js"
@@ -29,6 +30,50 @@ enum UserStatus {
   DISABLED
 }
 
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PoStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_RECEIVED
+  FULLY_RECEIVED
+  CANCELLED
+  CLOSED
+}
+
+enum ReceiptStatus {
+  DRAFT
+  SUBMITTED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  REVIEWED
+}
+
+enum DiscrepancyType {
+  QUANTITY_MISMATCH
+  OVER_DELIVERY
+  UNIT_PRICE_MISMATCH
+  DAMAGED_GOODS
+  UNMATCHED_LINE
+}
+
+enum DiscrepancySeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DiscrepancyStatus {
+  OPEN
+  DISMISSED
+  RESOLVED
+}
+
 model Organization {
   id              String   @id @default(uuid()) @db.Uuid
   name            String
@@ -42,6 +87,11 @@ model Organization {
 
   members     OrganizationMember[]
   invitations Invitation[]
+  suppliers   Supplier[]
+  purchaseOrders PurchaseOrder[]
+  receipts    Receipt[]
+  invoices    Invoice[]
+  discrepancies Discrepancy[]
 
   @@map("organizations")
 }
@@ -58,6 +108,8 @@ model User {
 
   memberships OrganizationMember[]
   sessions    Session[]
+  purchaseOrders PurchaseOrder[] @relation("PurchaseOrderCreatedBy")
+  receipts       Receipt[]       @relation("ReceiptReceivedBy")
 
   @@map("users")
 }
@@ -115,4 +167,195 @@ model Invitation {
   @@index([organizationId])
   @@index([email])
   @@map("invitations")
+}
+
+model Supplier {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @db.Uuid
+  code           String         @db.VarChar(40)
+  name           String
+  contactName    String?
+  email          String?
+  phone          String?        @db.VarChar(32)
+  gstin          String?        @db.VarChar(20)
+  addressLine1   String?
+  city           String?
+  state          String?
+  postalCode     String?        @db.VarChar(16)
+  country        String         @default("IN") @db.VarChar(2)
+  notes          String?
+  status         SupplierStatus @default(ACTIVE)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  purchaseOrders PurchaseOrder[]
+  invoices       Invoice[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id                 String    @id @default(uuid()) @db.Uuid
+  organizationId     String    @db.Uuid
+  supplierId         String    @db.Uuid
+  createdByUserId    String    @db.Uuid
+  poNumber           String    @db.VarChar(40)
+  status             PoStatus  @default(DRAFT)
+  currency           String    @default("INR") @db.VarChar(3)
+  issueDate          DateTime?
+  expectedDeliveryDate DateTime?
+  notes              String?
+  // Sum of line totals in integer minor units (paise). Never binary float.
+  totalMinor         Int       @default(0)
+  version            Int       @default(1)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplier     Supplier           @relation(fields: [supplierId], references: [id])
+  createdBy    User               @relation("PurchaseOrderCreatedBy", fields: [createdByUserId], references: [id])
+  lines        PurchaseOrderLine[]
+  receipts     Receipt[]
+  invoices     Invoice[]
+  discrepancies Discrepancy[]
+
+  @@unique([organizationId, poNumber])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([supplierId])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderLine {
+  id              String  @id @default(uuid()) @db.Uuid
+  purchaseOrderId String  @db.Uuid
+  lineNumber      Int
+  sku             String? @db.VarChar(60)
+  description     String
+  orderedQuantity Decimal @db.Decimal(14, 3)
+  unit            String  @db.VarChar(20)
+  unitPriceMinor  Int
+  lineTotalMinor  Int
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  receiptLines  ReceiptLine[]
+  invoiceLines  InvoiceLine[]
+  discrepancies Discrepancy[]
+
+  @@unique([purchaseOrderId, lineNumber])
+  @@index([purchaseOrderId])
+  @@map("purchase_order_lines")
+}
+
+model Receipt {
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @db.Uuid
+  purchaseOrderId String        @db.Uuid
+  receivedByUserId String       @db.Uuid
+  reference       String?       @db.VarChar(80)
+  notes           String?
+  status          ReceiptStatus @default(DRAFT)
+  receivedAt      DateTime?
+  submittedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  organization  Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  purchaseOrder PurchaseOrder      @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  receivedBy    User               @relation("ReceiptReceivedBy", fields: [receivedByUserId], references: [id])
+  lines         ReceiptLine[]
+
+  @@index([organizationId])
+  @@index([purchaseOrderId])
+  @@index([organizationId, status])
+  @@map("receipts")
+}
+
+model ReceiptLine {
+  id                  String  @id @default(uuid()) @db.Uuid
+  receiptId           String  @db.Uuid
+  purchaseOrderLineId String  @db.Uuid
+  receivedQuantity    Decimal @db.Decimal(14, 3)
+  damagedQuantity     Decimal @default(0) @db.Decimal(14, 3)
+
+  receipt           Receipt           @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  purchaseOrderLine PurchaseOrderLine @relation(fields: [purchaseOrderLineId], references: [id])
+
+  @@unique([receiptId, purchaseOrderLineId])
+  @@index([receiptId])
+  @@map("receipt_lines")
+}
+
+model Invoice {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  supplierId     String        @db.Uuid
+  purchaseOrderId String?      @db.Uuid
+  invoiceNumber  String        @db.VarChar(40)
+  status         InvoiceStatus @default(DRAFT)
+  currency       String        @default("INR") @db.VarChar(3)
+  invoiceDate    DateTime?
+  notes          String?
+  totalMinor     Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization  Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplier      Supplier        @relation(fields: [supplierId], references: [id])
+  purchaseOrder PurchaseOrder?  @relation(fields: [purchaseOrderId], references: [id])
+  lines         InvoiceLine[]
+  discrepancies Discrepancy[]
+
+  @@unique([organizationId, invoiceNumber])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([purchaseOrderId])
+  @@map("invoices")
+}
+
+model InvoiceLine {
+  id             String  @id @default(uuid()) @db.Uuid
+  invoiceId      String  @db.Uuid
+  purchaseOrderLineId String? @db.Uuid
+  description    String
+  quantity       Decimal @db.Decimal(14, 3)
+  unit           String  @db.VarChar(20)
+  unitPriceMinor Int
+  lineTotalMinor Int
+
+  invoice         Invoice          @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  purchaseOrderLine PurchaseOrderLine? @relation(fields: [purchaseOrderLineId], references: [id])
+
+  @@index([invoiceId])
+  @@map("invoice_lines")
+}
+
+model Discrepancy {
+  id              String              @id @default(uuid()) @db.Uuid
+  organizationId  String              @db.Uuid
+  purchaseOrderId String              @db.Uuid
+  invoiceId       String?             @db.Uuid
+  purchaseOrderLineId String?         @db.Uuid
+  type            DiscrepancyType
+  severity        DiscrepancySeverity
+  status          DiscrepancyStatus   @default(OPEN)
+  explanation     String
+  expectedValue   String?
+  actualValue     String?
+  createdAt       DateTime            @default(now())
+
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  purchaseOrder PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  invoice       Invoice?       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  purchaseOrderLine PurchaseOrderLine? @relation(fields: [purchaseOrderLineId], references: [id])
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([invoiceId])
+  @@map("discrepancies")
 }
