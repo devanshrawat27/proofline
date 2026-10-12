@@ -116,6 +116,6 @@ describe("PurchaseOrdersService", () => {
   it("refuses to cancel a non-cancellable purchase order", async () => {
     const prisma = makePrisma();
     prisma.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "FULLY_RECEIVED" });
-    await expect(service(prisma).cancel("org-1", "po-1")).rejects.toMatchObject({ statusCode: 400 });
+    await expect(service(prisma).cancel("org-1", "user-1", "po-1")).rejects.toMatchObject({ statusCode: 400 });
   });
 });

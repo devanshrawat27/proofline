@@ -11,6 +11,9 @@ import { PurchaseOrdersModule } from "./modules/purchase-orders/purchase-orders.
 import { ReceiptsModule } from "./modules/receipts/receipts.module";
 import { InvoicesModule } from "./modules/invoices/invoices.module";
 import { DiscrepanciesModule } from "./modules/discrepancies/discrepancies.module";
+import { CasesModule } from "./modules/cases/cases.module";
+import { ReportingModule } from "./modules/reporting/reporting.module";
+import { AuditModule } from "./modules/audit/audit.module";
 import { HealthModule } from "./modules/health/health.module";
 
 @Module({
@@ -24,6 +27,9 @@ import { HealthModule } from "./modules/health/health.module";
     ReceiptsModule,
     InvoicesModule,
     DiscrepanciesModule,
+    CasesModule,
+    ReportingModule,
+    AuditModule,
     HealthModule,
   ],
   providers: [

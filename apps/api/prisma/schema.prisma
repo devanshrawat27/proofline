@@ -74,6 +74,54 @@ enum DiscrepancyStatus {
   RESOLVED
 }
 
+enum CaseStatus {
+  OPEN
+  UNDER_REVIEW
+  SENT_TO_SUPPLIER
+  SUPPLIER_RESPONDED
+  RESOLUTION_PROPOSED
+  AWAITING_INTERNAL_APPROVAL
+  RESOLUTION_IN_PROGRESS
+  RESOLVED
+  CLOSED
+  CANCELLED
+}
+
+enum CasePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum MessageVisibility {
+  INTERNAL
+  SUPPLIER_VISIBLE
+}
+
+enum ResolutionType {
+  REPLACEMENT
+  CREDIT_NOTE
+  PARTIAL_CREDIT
+  REFUND
+  RETURN
+  NO_ADJUSTMENT
+  OTHER
+}
+
+enum ResolutionStatus {
+  PROPOSED
+  APPROVED
+  VERIFIED
+  REJECTED
+}
+
+enum AuditActorType {
+  USER
+  SUPPLIER
+  SYSTEM
+}
+
 model Organization {
   id              String   @id @default(uuid()) @db.Uuid
   name            String
@@ -92,6 +140,8 @@ model Organization {
   receipts    Receipt[]
   invoices    Invoice[]
   discrepancies Discrepancy[]
+  cases       DisputeCase[]
+  auditEvents AuditEvent[]
 
   @@map("organizations")
 }
@@ -110,6 +160,12 @@ model User {
   sessions    Session[]
   purchaseOrders PurchaseOrder[] @relation("PurchaseOrderCreatedBy")
   receipts       Receipt[]       @relation("ReceiptReceivedBy")
+  assignedCases  DisputeCase[]   @relation("CaseAssignee")
+  caseMessages   CaseMessage[]
+  caseEvents     CaseEvent[]
+  proposedResolutions Resolution[] @relation("ResolutionProposedBy")
+  approvedResolutions Resolution[] @relation("ResolutionApprovedBy")
+  verifiedResolutions Resolution[] @relation("ResolutionVerifiedBy")
 
   @@map("users")
 }
@@ -192,6 +248,7 @@ model Supplier {
 
   purchaseOrders PurchaseOrder[]
   invoices       Invoice[]
+  cases          DisputeCase[]
 
   @@unique([organizationId, code])
   @@index([organizationId])
@@ -353,9 +410,126 @@ model Discrepancy {
   purchaseOrder PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
   invoice       Invoice?       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   purchaseOrderLine PurchaseOrderLine? @relation(fields: [purchaseOrderLineId], references: [id])
+  caseItems     DisputeCaseItem[]
 
   @@index([organizationId])
   @@index([organizationId, status])
   @@index([invoiceId])
   @@map("discrepancies")
+}
+
+model DisputeCase {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  supplierId     String        @db.Uuid
+  assigneeUserId String?       @db.Uuid
+  caseNumber     String        @db.VarChar(20)
+  status         CaseStatus    @default(OPEN)
+  priority       CasePriority  @default(NORMAL)
+  summary        String
+  dueDate        DateTime?
+  openedAt       DateTime?
+  closedAt       DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplier     Supplier          @relation(fields: [supplierId], references: [id])
+  assignee     User?             @relation("CaseAssignee", fields: [assigneeUserId], references: [id])
+  items        DisputeCaseItem[]
+  messages     CaseMessage[]
+  events       CaseEvent[]
+  resolutions  Resolution[]
+
+  @@unique([organizationId, caseNumber])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([supplierId])
+  @@map("dispute_cases")
+}
+
+model DisputeCaseItem {
+  id            String @id @default(uuid()) @db.Uuid
+  caseId        String @db.Uuid
+  discrepancyId String @db.Uuid
+
+  case        DisputeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  discrepancy Discrepancy @relation(fields: [discrepancyId], references: [id])
+
+  @@unique([caseId, discrepancyId])
+  @@index([caseId])
+  @@map("dispute_case_items")
+}
+
+model CaseMessage {
+  id           String            @id @default(uuid()) @db.Uuid
+  caseId       String            @db.Uuid
+  authorUserId String?           @db.Uuid
+  visibility   MessageVisibility @default(INTERNAL)
+  body         String
+  createdAt    DateTime          @default(now())
+
+  case   DisputeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  author User?       @relation(fields: [authorUserId], references: [id])
+
+  @@index([caseId])
+  @@map("case_messages")
+}
+
+model CaseEvent {
+  id           String   @id @default(uuid()) @db.Uuid
+  caseId       String   @db.Uuid
+  actorUserId  String?  @db.Uuid
+  type         String   @db.VarChar(40)
+  message      String?
+  createdAt    DateTime @default(now())
+
+  case  DisputeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  actor User?       @relation(fields: [actorUserId], references: [id])
+
+  @@index([caseId])
+  @@map("case_events")
+}
+
+model Resolution {
+  id                  String           @id @default(uuid()) @db.Uuid
+  caseId              String           @db.Uuid
+  type                ResolutionType
+  status              ResolutionStatus @default(PROPOSED)
+  proposedAmountMinor Int?
+  reference           String?          @db.VarChar(120)
+  notes               String?
+  proposedByUserId    String           @db.Uuid
+  approvedByUserId    String?          @db.Uuid
+  verifiedByUserId    String?          @db.Uuid
+  proposedAt          DateTime         @default(now())
+  approvedAt          DateTime?
+  verifiedAt          DateTime?
+
+  case       DisputeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  proposedBy User        @relation("ResolutionProposedBy", fields: [proposedByUserId], references: [id])
+  approvedBy User?       @relation("ResolutionApprovedBy", fields: [approvedByUserId], references: [id])
+  verifiedBy User?       @relation("ResolutionVerifiedBy", fields: [verifiedByUserId], references: [id])
+
+  @@index([caseId])
+  @@map("resolutions")
+}
+
+model AuditEvent {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @db.Uuid
+  actorUserId    String?        @db.Uuid
+  actorName      String?
+  actorType      AuditActorType @default(USER)
+  action         String         @db.VarChar(60)
+  entityType     String         @db.VarChar(40)
+  entityId       String?        @db.Uuid
+  summary        String?
+  createdAt      DateTime       @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([organizationId, createdAt])
+  @@map("audit_events")
 }

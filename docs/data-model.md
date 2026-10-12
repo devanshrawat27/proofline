@@ -36,18 +36,26 @@ explicit `onDelete`, indexes on tenant and lookup columns, `snake_case` table na
   (`QUANTITY_MISMATCH | OVER_DELIVERY | UNIT_PRICE_MISMATCH | DAMAGED_GOODS | UNMATCHED_LINE`),
   `severity` (`LOW | MEDIUM | HIGH`), `status` (`OPEN | DISMISSED | RESOLVED`), `explanation`,
   `expectedValue`, `actualValue`.
+- **DisputeCase** — organization, supplier, optional assignee, `caseNumber` (unique per org),
+  `status` (state machine, see `cases.ts`), `priority`, `summary`, due/opened/closed timestamps.
+- **DisputeCaseItem** — case ↔ discrepancy (unique per pair).
+- **CaseMessage** — case, author, `visibility` (`INTERNAL | SUPPLIER_VISIBLE`), body.
+- **CaseEvent** — append-only case timeline (type, actor, message).
+- **Resolution** — case, `type` (replacement/credit/refund/…), `status`
+  (`PROPOSED | APPROVED | VERIFIED | REJECTED`), optional amount, reference, notes, proposer and
+  approver/verifier actor + timestamps.
 
 Money is stored as integer minor units (paise); quantities use a decimal type. Line totals are
 computed deterministically on the server (`round(quantity × unitPriceMinor)`). On receipt
 submission the server recomputes the PO status (`PARTIALLY_RECEIVED` / `FULLY_RECEIVED`) from
 the sum of submitted receipts. On invoice review the server recomputes the invoice's
 discrepancies deterministically (no AI): billed vs received quantity, over-delivery, unit-price
-deltas, damaged goods and unmatched lines.
+deltas, damaged goods and unmatched lines. Case status changes are guarded by a server-side
+state machine; a resolution must be approved before it can be verified.
 
 ## Planned (later phases)
 
-SupplierUser, Document, DocumentExtraction, CaseMessage, DisputeCase, DisputeCaseItem,
-CaseEvent, Resolution, Notification, AuditEvent.
+SupplierUser, Document, DocumentExtraction, Notification, AuditEvent.
 
 ## Integrity rules (applied now and enforced going forward)
 

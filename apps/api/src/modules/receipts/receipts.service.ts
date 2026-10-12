@@ -10,6 +10,7 @@ import type {
 } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
+import { writeAudit } from "../../common/audit/audit";
 
 const SUPPLIER_SELECT = { select: { id: true, name: true, code: true } } as const;
 
@@ -212,7 +213,7 @@ export class ReceiptsService {
     return toDto(receipt);
   }
 
-  async submit(organizationId: string, id: string): Promise<ReceiptDto> {
+  async submit(organizationId: string, actorUserId: string, id: string): Promise<ReceiptDto> {
     const current = await this.prisma.receipt.findFirst({
       where: { id, organizationId },
       include: { lines: { select: { receivedQuantity: true } } },
@@ -234,6 +235,15 @@ export class ReceiptsService {
       });
       await this.recomputePoStatus(tx, current.purchaseOrderId);
       return updated;
+    });
+
+    await writeAudit(this.prisma, {
+      organizationId,
+      actorUserId,
+      action: "receipt.submitted",
+      entityType: "Receipt",
+      entityId: id,
+      summary: `Against ${receipt.purchaseOrder.poNumber}`,
     });
 
     return toDto(receipt);

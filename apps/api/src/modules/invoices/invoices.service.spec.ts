@@ -28,6 +28,7 @@ interface MockedPrisma {
   invoiceLine: { deleteMany: jest.Mock };
   discrepancy: { deleteMany: jest.Mock; createMany: jest.Mock };
   receiptLine: { findMany: jest.Mock };
+  auditEvent: { create: jest.Mock };
   $transaction: jest.Mock;
 }
 
@@ -43,6 +44,7 @@ function makePrisma(): MockedPrisma {
     invoiceLine: { deleteMany: jest.fn() },
     discrepancy: { deleteMany: jest.fn(), createMany: jest.fn() },
     receiptLine: { findMany: jest.fn().mockResolvedValue([]) },
+    auditEvent: { create: jest.fn().mockResolvedValue({}) },
     $transaction: jest.fn(),
   };
   prisma.$transaction.mockImplementation((arg: unknown) =>
@@ -95,7 +97,7 @@ describe("InvoicesService review", () => {
       updatedAt: new Date(),
     });
 
-    await service(prisma).review("org-1", "inv-1");
+    await service(prisma).review("org-1", "user-1", "inv-1");
 
     const created = prisma.discrepancy.createMany.mock.calls[0]?.[0]?.data as { type: string }[];
     const types = created.map((row) => row.type).sort();
@@ -115,6 +117,6 @@ describe("InvoicesService review", () => {
       lines: [],
       _count: { discrepancies: 0 },
     });
-    await expect(service(prisma).review("org-1", "inv-1")).rejects.toBeInstanceOf(AppError);
+    await expect(service(prisma).review("org-1", "user-1", "inv-1")).rejects.toBeInstanceOf(AppError);
   });
 });

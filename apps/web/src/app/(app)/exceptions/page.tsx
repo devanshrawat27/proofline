@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { roleHasPermission } from "@proofline/shared-types";
 import type { DiscrepancyDto, Paginated } from "@proofline/shared-types";
 import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState, PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -52,6 +54,7 @@ export default async function ExceptionsPage({ searchParams }: { searchParams: E
   const pageSize = result.data?.pageSize ?? 20;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const hasFilters = Boolean(searchParams.search || searchParams.severity || searchParams.type || searchParams.status);
+  const canWrite = roleHasPermission(session.membership.role, "case:write");
 
   function pageHref(target: number) {
     const sp = new URLSearchParams(qs.toString());
@@ -66,6 +69,13 @@ export default async function ExceptionsPage({ searchParams }: { searchParams: E
       <PageHeader
         title="Exceptions"
         description="Discrepancies found by comparing purchase orders, receipts and invoices."
+        actions={
+          canWrite ? (
+            <Link href="/cases/new">
+              <Button>New case</Button>
+            </Link>
+          ) : null
+        }
       />
 
       <Card>

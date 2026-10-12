@@ -48,6 +48,6 @@ export class InvoicesController {
   @HttpCode(200)
   @Post(":id/review")
   review(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
-    return this.invoices.review(user.organizationId, id);
+    return this.invoices.review(user.organizationId, user.userId, id);
   }
 }

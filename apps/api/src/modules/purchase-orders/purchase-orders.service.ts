@@ -11,6 +11,7 @@ import type {
 } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
+import { writeAudit } from "../../common/audit/audit";
 
 type PoWithSupplier = PurchaseOrder & {
   supplier: { id: string; name: string; code: string };
@@ -214,7 +215,7 @@ export class PurchaseOrdersService {
     return toDto(po);
   }
 
-  async issue(organizationId: string, id: string): Promise<PurchaseOrderDto> {
+  async issue(organizationId: string, actorUserId: string, id: string): Promise<PurchaseOrderDto> {
     const current = await this.prisma.purchaseOrder.findFirst({
       where: { id, organizationId },
       include: { _count: { select: { lines: true } } },
@@ -232,10 +233,18 @@ export class PurchaseOrdersService {
       data: { status: "ISSUED", issueDate: current.issueDate ?? new Date() },
       include: { supplier: SUPPLIER_SELECT, lines: true },
     });
+    await writeAudit(this.prisma, {
+      organizationId,
+      actorUserId,
+      action: "po.issued",
+      entityType: "PurchaseOrder",
+      entityId: id,
+      summary: po.poNumber,
+    });
     return toDto(po);
   }
 
-  async cancel(organizationId: string, id: string): Promise<PurchaseOrderDto> {
+  async cancel(organizationId: string, actorUserId: string, id: string): Promise<PurchaseOrderDto> {
     const current = await this.prisma.purchaseOrder.findFirst({
       where: { id, organizationId },
       select: { id: true, status: true },
@@ -249,6 +258,14 @@ export class PurchaseOrdersService {
       where: { id },
       data: { status: "CANCELLED" },
       include: { supplier: SUPPLIER_SELECT, lines: true },
+    });
+    await writeAudit(this.prisma, {
+      organizationId,
+      actorUserId,
+      action: "po.cancelled",
+      entityType: "PurchaseOrder",
+      entityId: id,
+      summary: po.poNumber,
     });
     return toDto(po);
   }

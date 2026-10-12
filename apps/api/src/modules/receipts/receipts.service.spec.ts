@@ -31,6 +31,7 @@ interface MockedPrisma {
   };
   receiptLine: { deleteMany: jest.Mock; findMany: jest.Mock };
   purchaseOrder: { findFirst: jest.Mock; findUnique: jest.Mock; update: jest.Mock };
+  auditEvent: { create: jest.Mock };
   $transaction: jest.Mock;
 }
 
@@ -45,6 +46,7 @@ function makePrisma(): MockedPrisma {
     },
     receiptLine: { deleteMany: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
     purchaseOrder: { findFirst: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+    auditEvent: { create: jest.fn().mockResolvedValue({}) },
     $transaction: jest.fn(),
   };
   prisma.$transaction.mockImplementation((arg: unknown) =>
@@ -104,7 +106,7 @@ describe("ReceiptsService", () => {
     });
     prisma.receiptLine.findMany.mockResolvedValue([{ purchaseOrderLineId: "l1", receivedQuantity: 94 }]);
 
-    await service(prisma).submit("org-1", "rec-1");
+    await service(prisma).submit("org-1", "user-1", "rec-1");
 
     expect(prisma.purchaseOrder.update).toHaveBeenCalledWith(
       expect.objectContaining({ where: { id: "po-1" }, data: { status: "PARTIALLY_RECEIVED" } }),

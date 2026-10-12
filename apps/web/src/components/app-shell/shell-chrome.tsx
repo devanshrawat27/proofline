@@ -9,10 +9,12 @@ import {
   Building2,
   FileText,
   FolderOpen,
+  Gavel,
   LayoutDashboard,
   LogOut,
   PackageCheck,
   ReceiptText,
+  ScrollText,
   Settings,
   Users,
 } from "lucide-react";
@@ -31,12 +33,14 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: "/overview", label: "Overview", icon: LayoutDashboard },
   { href: "/exceptions", label: "Exceptions", icon: AlertTriangle },
+  { href: "/cases", label: "Cases", icon: Gavel },
   { href: "/purchase-orders", label: "Purchase Orders", icon: FileText },
   { href: "/receiving", label: "Receiving", icon: PackageCheck },
   { href: "/invoices", label: "Invoices", icon: ReceiptText },
   { href: "/suppliers", label: "Suppliers", icon: Building2 },
   { href: "/documents", label: "Documents", icon: FolderOpen, disabled: true },
-  { href: "/reports", label: "Reports", icon: BarChart3, disabled: true },
+  { href: "/reports", label: "Reports", icon: BarChart3 },
+  { href: "/audit", label: "Audit log", icon: ScrollText },
   { href: "/members", label: "Members & roles", icon: Users },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

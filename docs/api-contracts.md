@@ -111,9 +111,47 @@ Validations: `damagedQuantity ≤ receivedQuantity` (400 `VALIDATION_ERROR`), PO
 Detection is deterministic and explainable; each row keeps its expected/actual values and a
 source-link to the PO and invoice. AI never approves or mutates records.
 
+### Cases
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/cases` | `case:read` | Paginated list. Query: `search`, `status`, `priority`, `page`, `pageSize`. |
+| POST | `/api/v1/cases` | `case:write` | Opens a case from one or more discrepancies (single supplier; not already cased). |
+| GET | `/api/v1/cases/:id` | `case:read` | Case with items, messages, events and resolutions. |
+| POST | `/api/v1/cases/:id/transitions` | `case:write` | State-machine transition (400 `INVALID_TRANSITION`). |
+| POST | `/api/v1/cases/:id/assign` | `case:write` | Assign to an active member (400 `INVALID_ASSIGNEE`). |
+| POST | `/api/v1/cases/:id/messages` | `case:write` | Adds an `INTERNAL` or `SUPPLIER_VISIBLE` message. |
+| POST | `/api/v1/cases/:id/resolutions` | `case:write` | Proposes a resolution (only while `UNDER_REVIEW`/`SUPPLIER_RESPONDED`). |
+| POST | `/api/v1/cases/:id/resolutions/:resolutionId/approve` | `case:approve` | Approves a proposed resolution. |
+| POST | `/api/v1/cases/:id/resolutions/:resolutionId/verify` | `resolution:verify` | Verifies an approved resolution; case becomes `RESOLVED`. |
+
+The allowed case transitions live in `packages/shared-types` (`CASE_TRANSITIONS`) and are
+enforced on the server. Every status change, assignment, message and resolution decision is
+recorded as an append-only `CaseEvent`.
+
+### Dashboard & reports
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/dashboard/summary` | authenticated | Open cases, awaiting supplier, overdue, disputed value, avg resolution days, plus breakdowns by case status, discrepancy type and PO status. |
+| GET | `/api/v1/reports/discrepancies` | `report:read` | Open discrepancies grouped by type and severity. |
+| GET | `/api/v1/reports/suppliers` | `report:read` | Per-supplier case counts, open cases and disputed value. |
+
+All metrics are computed from real records (no placeholder data). "Disputed value" is the
+invoiced value (integer minor units) of invoices that produced open discrepancies.
+
+### Audit log
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/audit-events` | `audit:read` | Paginated, append-only events. Query: `search`, `action`, `entityType`, `page`, `pageSize`. |
+
+Events are written for key actions: `po.issued`/`po.cancelled`, `receipt.submitted`,
+`invoice.reviewed`, and all case actions (`case.created`, `case.status_changed`,
+`case.assigned`, `case.message_added`, `case.resolution_proposed`/`_approved`/`_verified`).
+
 ## Planned (later phases)
 
-Document upload/processing/review, case lifecycle (assign, transitions, messages, resolutions,
-close), resolution approval/verification, supplier portal, dashboard summary, reports, audit
-events, notifications. These are design targets only — they will be added with implementation
-and tests together.
+Document upload/processing/review, AI extraction, supplier portal (separate supplier identity),
+notifications. These are design targets only — they will be added with implementation and tests
+together.

@@ -12,6 +12,7 @@ import type {
 } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
+import { writeAudit } from "../../common/audit/audit";
 
 const SUPPLIER_SELECT = { select: { id: true, name: true, code: true } } as const;
 const PO_SELECT = { select: { id: true, poNumber: true } } as const;
@@ -240,7 +241,7 @@ export class InvoicesService {
     return toDto(invoice);
   }
 
-  async review(organizationId: string, id: string): Promise<InvoiceDto> {
+  async review(organizationId: string, actorUserId: string, id: string): Promise<InvoiceDto> {
     const invoice = await this.prisma.invoice.findFirst({
       where: { id, organizationId },
       include: {
@@ -365,6 +366,15 @@ export class InvoicesService {
         data: { status: "REVIEWED" },
         include: INVOICE_INCLUDE,
       });
+    });
+
+    await writeAudit(this.prisma, {
+      organizationId,
+      actorUserId,
+      action: "invoice.reviewed",
+      entityType: "Invoice",
+      entityId: id,
+      summary: `${discrepancies.length} discrepancy(ies) detected`,
     });
 
     return toDto(updated);

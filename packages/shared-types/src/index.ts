@@ -4,6 +4,9 @@ export * from "./suppliers";
 export * from "./purchase-orders";
 export * from "./receipts";
 export * from "./invoices";
+export * from "./cases";
+export * from "./dashboard";
+export * from "./audit";
 
 /** Standard API error shape returned by the Nest API. */
 export interface ApiErrorBody {

@@ -96,10 +96,13 @@ and `docs/api-contracts.md`.
 
 Phase 1 (foundation) is complete: tenancy, auth, RBAC, organizations, members,
 invitations, health/ready, web shell + landing/auth/overview/members/settings,
-sample seed, CI, docs. Phase 2 (core operations) is in progress: **suppliers**,
+sample seed, CI, docs. Phase 2 (core operations) is well underway: **suppliers**,
 **purchase orders** (create/edit/issue/cancel), **receiving** (partial/damaged
-receipts + PO status recomputation) and the **invoice + deterministic discrepancy
-engine** (PO/receipt/invoice checks) are implemented end-to-end with tenant scoping,
-RBAC, Zod validation, tests and docs. Remaining: receipt/document attachments & file
-storage, AI document extraction, cases + supplier portal, notifications/reports/audit,
+receipts + PO status recomputation), the **invoice + deterministic discrepancy
+engine** and the **dispute case workspace** (state machine, timeline, internal/
+supplier-visible messages, resolution approve/verify), the **real dashboard +
+reports** (open cases, disputed value, discrepancy/supplier breakdowns) and an
+**append-only audit log** are implemented end-to-end with tenant scoping, RBAC, Zod
+validation, tests and docs. Remaining: receipt/document attachments & file storage,
+AI document extraction, supplier portal (separate supplier identity), notifications,
 polish.

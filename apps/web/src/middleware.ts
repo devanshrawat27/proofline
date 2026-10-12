@@ -8,12 +8,14 @@ const PROTECTED_PREFIXES = [
   "/members",
   "/settings",
   "/exceptions",
+  "/cases",
   "/purchase-orders",
   "/receiving",
   "/invoices",
   "/suppliers",
   "/documents",
   "/reports",
+  "/audit",
 ];
 
 /**
@@ -44,11 +46,13 @@ export const config = {
     "/members/:path*",
     "/settings/:path*",
     "/exceptions/:path*",
+    "/cases/:path*",
     "/purchase-orders/:path*",
     "/receiving/:path*",
     "/invoices/:path*",
     "/suppliers/:path*",
     "/documents/:path*",
     "/reports/:path*",
+    "/audit/:path*",
   ],
 };

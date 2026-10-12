@@ -52,6 +52,6 @@ export class ReceiptsController {
   @HttpCode(200)
   @Post(":id/submit")
   submit(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
-    return this.receipts.submit(user.organizationId, id);
+    return this.receipts.submit(user.organizationId, user.userId, id);
   }
 }

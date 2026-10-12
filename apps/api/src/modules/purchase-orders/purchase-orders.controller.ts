@@ -56,13 +56,13 @@ export class PurchaseOrdersController {
   @HttpCode(200)
   @Post(":id/issue")
   issue(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
-    return this.purchaseOrders.issue(user.organizationId, id);
+    return this.purchaseOrders.issue(user.organizationId, user.userId, id);
   }
 
   @RequirePermissions("po:write")
   @HttpCode(200)
   @Post(":id/cancel")
   cancel(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
-    return this.purchaseOrders.cancel(user.organizationId, id);
+    return this.purchaseOrders.cancel(user.organizationId, user.userId, id);
   }
 }
