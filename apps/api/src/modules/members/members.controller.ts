@@ -47,7 +47,7 @@ export class MembersController {
     });
     res.cookie(env.SESSION_COOKIE_NAME, result.session.token, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: isProduction ? "none" : "lax",
       secure: isProduction,
       path: "/",
       expires: result.session.expiresAt,

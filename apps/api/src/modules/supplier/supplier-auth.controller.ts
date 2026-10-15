@@ -28,7 +28,7 @@ export class SupplierAuthController {
   private setCookie(res: Response, token: string, expiresAt: Date): void {
     res.cookie(env.SUPPLIER_COOKIE_NAME, token, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: isProduction ? "none" : "lax",
       secure: isProduction,
       path: "/",
       expires: expiresAt,
