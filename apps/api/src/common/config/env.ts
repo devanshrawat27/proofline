@@ -9,9 +9,24 @@ import { z } from "zod";
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  DATABASE_URL: z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    const match = value.match(/postgres(?:ql)?:\/\/[^\s"']+/);
+    return match ? match[0] : value;
+  }, z.string().min(1, "DATABASE_URL is required")),
 
-  REDIS_URL: z.string().url().optional(),
+  REDIS_URL: z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    // Tolerate pasted values like `redis-cli --tls -u rediss://...` by
+    // extracting the URL, and force TLS for Upstash hosts.
+    const match = value.match(/rediss?:\/\/[^\s"']+/);
+    if (!match) return value;
+    let url = match[0];
+    if (url.startsWith("redis://") && /\.upstash\.io/i.test(url)) {
+      url = `rediss://${url.slice("redis://".length)}`;
+    }
+    return url;
+  }, z.string().url().optional()),
 
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().positive().default(1025),
