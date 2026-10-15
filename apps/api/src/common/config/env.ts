@@ -19,6 +19,17 @@ const envSchema = z.object({
   SMTP_PASSWORD: z.string().optional(),
   SMTP_FROM: z.string().default("Proofline <no-reply@proofline.local>"),
 
+  STORAGE_DRIVER: z.enum(["local", "s3"]).default("local"),
+  S3_ENDPOINT: z.string().url().optional(),
+  S3_REGION: z.string().default("us-east-1"),
+  S3_ACCESS_KEY: z.string().optional(),
+  S3_SECRET_KEY: z.string().optional(),
+  S3_BUCKET: z.string().optional(),
+  S3_FORCE_PATH_STYLE: z
+    .string()
+    .optional()
+    .transform((value) => value !== "false"),
+
   SESSION_COOKIE_NAME: z.string().min(1).default("proofline_session"),
   SUPPLIER_COOKIE_NAME: z.string().min(1).default("proofline_supplier_session"),
   SESSION_SECRET: z
@@ -27,7 +38,7 @@ const envSchema = z.object({
     .default("dev-only-change-me-please-generate-a-real-48-byte-secret"),
   SESSION_TTL_HOURS: z.coerce.number().int().positive().default(168),
 
-  API_PORT: z.coerce.number().int().positive().default(4000),
+  API_PORT: z.coerce.number().int().positive().default(Number(process.env.PORT) || 4000),
   API_PUBLIC_URL: z.string().url().default("http://localhost:4000"),
   WEB_PUBLIC_URL: z.string().url().default("http://localhost:3000"),
   CORS_ALLOWED_ORIGINS: z.string().default("http://localhost:3000"),

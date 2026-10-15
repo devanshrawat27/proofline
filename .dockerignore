@@ -1,0 +1,27 @@
+# Keep the build context small and never bake secrets or local state.
+.git
+.github
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/*.log
+.env
+.env.*
+apps/api/.env
+apps/web/.env.local
+.local-storage
+**/.local-storage
+uploads
+playwright-report
+test-results
+coverage
+
+# Large local-only assets
+Proofline_Design_References.zip
+Proofline_Design_References/
+Forest Green Checklist App Icon.png
+Neon Document Sync Network.png
+Resolved Supplier Dashboard Card.png
+Shipping Box and Barcode Scanner Scan.png
+proofline-mark.svg

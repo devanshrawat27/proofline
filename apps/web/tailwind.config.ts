@@ -22,7 +22,7 @@ const config: Config = {
           line: "#1B3A2C",
         },
         line: "#E1E7E2",
-        warn: { DEFAULT: "#A85D10", surface: "#FBF3E6" },
+        warn: { DEFAULT: "#8F4E0C", surface: "#FBF3E6" },
         critical: { DEFAULT: "#B42318", surface: "#FDECEA" },
         success: { DEFAULT: "#18794E", surface: "#E7F5EE" },
         info: { DEFAULT: "#315E8A", surface: "#EAF1F8" },

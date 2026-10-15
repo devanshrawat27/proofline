@@ -313,6 +313,152 @@ async function main(): Promise<void> {
     });
   }
 
+  // --- Per-role demo: discrepancies, cases, messages, a resolution ----------
+  const manager = await prisma.user.findUnique({
+    where: { email: "manager@meridian.local" },
+    select: { id: true },
+  });
+  const owner = await prisma.user.findUnique({
+    where: { email: "owner@meridian.local" },
+    select: { id: true },
+  });
+  const existingCase = await prisma.disputeCase.findFirst({
+    where: { organizationId: organization.id, caseNumber: "CASE-1001" },
+    select: { id: true },
+  });
+
+  if (!existingCase && po1042 && manager && owner && po1042.lines.length > 0) {
+    const invoice = await prisma.invoice.findUnique({
+      where: { organizationId_invoiceNumber: { organizationId: organization.id, invoiceNumber: "INV-5562" } },
+      select: { id: true },
+    });
+    const poLine = po1042.lines[0]!;
+
+    const discrepancySeed: Array<{
+      type: "QUANTITY_MISMATCH" | "DAMAGED_GOODS";
+      severity: "HIGH" | "MEDIUM";
+      explanation: string;
+      expectedValue: string;
+      actualValue: string;
+    }> = [
+      {
+        type: "QUANTITY_MISMATCH",
+        severity: "HIGH",
+        explanation: "PO ordered 100; received 94; invoiced 100.",
+        expectedValue: "94 piece",
+        actualValue: "100 piece",
+      },
+      {
+        type: "DAMAGED_GOODS",
+        severity: "MEDIUM",
+        explanation: "2 piece of the received quantity was reported damaged.",
+        expectedValue: "0",
+        actualValue: "2 piece",
+      },
+    ];
+
+    const discrepancyIds: string[] = [];
+    for (const item of discrepancySeed) {
+      const row = await prisma.discrepancy.create({
+        data: {
+          organizationId: organization.id,
+          purchaseOrderId: po1042.id,
+          invoiceId: invoice?.id ?? null,
+          purchaseOrderLineId: poLine.id,
+          type: item.type,
+          severity: item.severity,
+          explanation: item.explanation,
+          expectedValue: item.expectedValue,
+          actualValue: item.actualValue,
+        },
+      });
+      discrepancyIds.push(row.id);
+    }
+    if (invoice) {
+      await prisma.invoice.update({ where: { id: invoice.id }, data: { status: "REVIEWED" } });
+    }
+
+    const brightTechId = supplierIds.get("SUP-BRIGHTTECH")!;
+    await prisma.disputeCase.create({
+      data: {
+        organizationId: organization.id,
+        supplierId: brightTechId,
+        assigneeUserId: manager.id,
+        caseNumber: "CASE-1001",
+        status: "SENT_TO_SUPPLIER",
+        priority: "HIGH",
+        summary: "Short & damaged LED driver delivery",
+        openedAt: new Date(),
+        items: { create: discrepancyIds.map((discrepancyId) => ({ discrepancyId })) },
+        messages: {
+          create: [
+            {
+              authorUserId: manager.id,
+              visibility: "INTERNAL",
+              body: "Warehouse confirmed 94 received and 2 damaged.",
+            },
+            {
+              authorUserId: manager.id,
+              visibility: "SUPPLIER_VISIBLE",
+              body: "Please confirm the short delivery and propose a resolution.",
+            },
+          ],
+        },
+        events: {
+          create: [
+            { actorUserId: manager.id, type: "CASE_OPENED", message: "Case opened" },
+            { actorUserId: manager.id, type: "STATUS_CHANGED", message: "OPEN → SENT_TO_SUPPLIER" },
+          ],
+        },
+      },
+    });
+
+    // Second case that finance can verify (approved resolution awaiting verification).
+    const electroLabId = supplierIds.get("SUP-ELECTROLAB") ?? brightTechId;
+    const pricedMismatch = await prisma.discrepancy.create({
+      data: {
+        organizationId: organization.id,
+        purchaseOrderId: po1042.id,
+        purchaseOrderLineId: poLine.id,
+        type: "UNIT_PRICE_MISMATCH",
+        severity: "MEDIUM",
+        explanation: "Purchase order unit price and invoice unit price differ.",
+        expectedValue: "₹500.00",
+        actualValue: "₹520.00",
+      },
+    });
+    await prisma.disputeCase.create({
+      data: {
+        organizationId: organization.id,
+        supplierId: electroLabId,
+        assigneeUserId: manager.id,
+        caseNumber: "CASE-1002",
+        status: "AWAITING_INTERNAL_APPROVAL",
+        priority: "NORMAL",
+        summary: "Unit price mismatch awaiting finance verification",
+        openedAt: new Date(),
+        items: { create: [{ discrepancyId: pricedMismatch.id }] },
+        resolutions: {
+          create: [
+            {
+              type: "CREDIT_NOTE",
+              status: "APPROVED",
+              proposedAmountMinor: 2_000,
+              reference: "CN-DEMO-1",
+              notes: "Credit for the price difference",
+              proposedByUserId: manager.id,
+              approvedByUserId: owner.id,
+              approvedAt: new Date(),
+            },
+          ],
+        },
+        events: {
+          create: [{ actorUserId: manager.id, type: "RESOLUTION_APPROVED", message: "Resolution approved" }],
+        },
+      },
+    });
+  }
+
   // eslint-disable-next-line no-console
   console.log("Seed complete.");
   // eslint-disable-next-line no-console

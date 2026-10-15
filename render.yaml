@@ -1,0 +1,75 @@
+# Render Blueprint — deploys the Proofline API as a Docker web service (free plan).
+# Secrets are `sync: false`: set them in the Render dashboard after creating the service.
+services:
+  - type: web
+    name: proofline-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+
+      # Provide these in the dashboard (sync:false)
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+
+      # Cookies
+      - key: SESSION_COOKIE_NAME
+        value: proofline_session
+      - key: SUPPLIER_COOKIE_NAME
+        value: proofline_supplier_session
+      - key: SESSION_TTL_HOURS
+        value: "168"
+
+      # URLs / CORS — set after the first deploy to the real Render + Vercel URLs
+      - key: API_PUBLIC_URL
+        sync: false
+      - key: WEB_PUBLIC_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+      # Object storage (Supabase / R2 / S3)
+      - key: STORAGE_DRIVER
+        value: s3
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_FORCE_PATH_STYLE
+        value: "true"
+
+      # Email (Brevo / SES / etc.)
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+
+      # AI
+      - key: AI_PROVIDER
+        value: gemini
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.1-flash-lite

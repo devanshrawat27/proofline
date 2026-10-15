@@ -107,5 +107,7 @@ identity with its own cookie, supplier-scoped case access), **in-app notificatio
 extraction + review** (Gemini, schema-validated, human-confirmed), and **email
 notifications** (BullMQ/Redis queue with retries, SMTP via Mailpit locally, inline
 fallback when Redis is absent) are implemented end-to-end with tenant scoping, RBAC,
-Zod validation, tests and docs. OpenAPI/Swagger is served at `/docs`. Remaining: polish
-(Playwright E2E, accessibility pass).
+Zod validation, tests and docs. OpenAPI/Swagger is served at `/docs`. Deployment
+artifacts (API `Dockerfile`, `render.yaml`, Vercel config, `docs/deployment.md`) and
+**Playwright E2E + accessibility** tests are in place. Remaining: execute the deploy
+(needs hosted credentials) and optional docs (competitor matrix, AI evaluation).
