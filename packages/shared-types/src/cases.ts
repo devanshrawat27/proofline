@@ -126,7 +126,7 @@ export interface CaseMessageDto {
   id: string;
   visibility: MessageVisibility;
   body: string;
-  author: { id: string; name: string } | null;
+  authorName: string | null;
   createdAt: string;
 }
 

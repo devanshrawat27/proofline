@@ -1,5 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import type { NextFunction, Request, Response } from "express";
@@ -9,15 +10,22 @@ import { requestIdMiddleware } from "./common/http/request-id.middleware";
 import { corsAllowedOrigins, env } from "./common/config/env";
 
 async function bootstrap(): Promise<void> {
+  // Documents are uploaded as base64 JSON, so raise the body limit above the
+  // 10 MB file cap (base64 inflates by ~33%).
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
     logger:
       env.NODE_ENV === "production"
         ? ["error", "warn", "log"]
         : ["error", "warn", "log", "debug"],
   });
 
+  app.useBodyParser("json", { limit: "15mb" });
+  app.useBodyParser("urlencoded", { limit: "15mb", extended: true });
   app.set("trust proxy", 1);
-  app.use(helmet());
+  // CSP is irrelevant for a JSON API and would block the Swagger UI; other
+  // helmet protections stay on.
+  app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cookieParser());
   app.use(requestIdMiddleware);
 
@@ -47,6 +55,16 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new ApiExceptionFilter());
 
   app.setGlobalPrefix("api/v1", { exclude: ["health", "ready"] });
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle("Proofline API")
+    .setDescription("Supplier delivery discrepancy and dispute-resolution platform.")
+    .setVersion("1.0")
+    .addCookieAuth(env.SESSION_COOKIE_NAME, { type: "apiKey", in: "cookie" }, "session")
+    .build();
+  SwaggerModule.setup("docs", app, SwaggerModule.createDocument(app, swaggerConfig), {
+    useGlobalPrefix: false,
+  });
 
   app.enableShutdownHooks();
 

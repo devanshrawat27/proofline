@@ -9,6 +9,7 @@ import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { InvoiceActions } from "@/components/invoices/invoice-actions";
+import { Attachments } from "@/components/documents/attachments";
 import { INVOICE_STATUS_TONE, SEVERITY_TONE, discrepancyTypeLabel } from "@/components/invoices/status";
 import { getSessionContext, serverGet } from "@/lib/server-api";
 import { formatMinor, formatQuantity } from "@/lib/format";
@@ -38,6 +39,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
 
   const invoice = result.data;
   const canWrite = roleHasPermission(session.membership.role, "invoice:write");
+  const canUploadDocs = roleHasPermission(session.membership.role, "document:write");
 
   const discrepancies =
     invoice.status === "REVIEWED"
@@ -127,6 +129,22 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
               </tbody>
             </table>
           </div>
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Invoice file</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <Attachments
+            apiBase="/api/v1/documents"
+            listPath={`?entityType=INVOICE&entityId=${invoice.id}`}
+            entityType="INVOICE"
+            entityId={invoice.id}
+            canUpload={canUploadDocs}
+            reviewBase="/documents"
+          />
         </CardBody>
       </Card>
 

@@ -9,6 +9,7 @@ import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CaseActions } from "@/components/cases/case-actions";
+import { Attachments } from "@/components/documents/attachments";
 import {
   CASE_PRIORITY_TONE,
   CASE_STATUS_TONE,
@@ -55,6 +56,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
   const canWrite = roleHasPermission(session.membership.role, "case:write");
   const canApprove = roleHasPermission(session.membership.role, "case:approve");
   const canVerify = roleHasPermission(session.membership.role, "resolution:verify");
+  const canUploadDocs = roleHasPermission(session.membership.role, "document:write");
 
   const membersResult = canWrite ? await serverGet<MemberRow[]>("/api/v1/members") : null;
   const memberOptions = (membersResult?.data ?? [])
@@ -76,7 +78,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
       created: message.createdAt,
       title: visibilityLabel(message.visibility),
       body: message.body,
-      actor: message.author?.name ?? null,
+      actor: message.authorName,
       visibility: message.visibility,
     })),
   ].sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
@@ -176,6 +178,23 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
                   </li>
                 ))}
               </ul>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Evidence &amp; attachments</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Attachments
+                apiBase="/api/v1/documents"
+                listPath={`?entityType=CASE&entityId=${caseData.id}`}
+                entityType="CASE"
+                entityId={caseData.id}
+                canUpload={canUploadDocs}
+                supplierUpload
+                reviewBase="/documents"
+              />
             </CardBody>
           </Card>
 

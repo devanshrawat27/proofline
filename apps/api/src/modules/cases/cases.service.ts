@@ -16,6 +16,7 @@ import { canTransition } from "@proofline/shared-types";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
 import { writeAudit } from "../../common/audit/audit";
+import { NotificationsService } from "../notifications/notifications.service";
 
 const SUPPLIER_SELECT = { select: { id: true, name: true, code: true } } as const;
 const USER_SELECT = { select: { id: true, name: true } } as const;
@@ -75,7 +76,7 @@ function toCase(item: CaseWithRelations): CaseDto {
       id: message.id,
       visibility: message.visibility,
       body: message.body,
-      author: message.author,
+      authorName: message.author?.name ?? message.authorName ?? null,
       createdAt: message.createdAt.toISOString(),
     })),
     events: item.events.map((event) => ({
@@ -108,7 +109,10 @@ type Tx = Prisma.TransactionClient;
 
 @Injectable()
 export class CasesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   async list(organizationId: string, query: CaseListQuery): Promise<Paginated<CaseSummaryDto>> {
     const { search, status, priority, page, pageSize } = query;
@@ -220,6 +224,16 @@ export class CasesService {
       summary: `Opened ${item.caseNumber} with ${input.discrepancyIds.length} discrepancy item(s)`,
     });
 
+    if (input.assigneeUserId) {
+      await this.notifications.createForUser(input.assigneeUserId, {
+        organizationId,
+        type: "CASE_ASSIGNED",
+        title: `Case ${item.caseNumber} was assigned to you`,
+        entityType: "DisputeCase",
+        entityId: item.id,
+      });
+    }
+
     return toCase(item);
   }
 
@@ -231,7 +245,7 @@ export class CasesService {
   ): Promise<CaseDto> {
     const current = await this.prisma.disputeCase.findFirst({
       where: { id, organizationId },
-      select: { id: true, status: true },
+      select: { id: true, status: true, supplierId: true, caseNumber: true },
     });
     if (!current) throw AppError.notFound("Case not found");
     if (!canTransition(current.status, input.status)) {
@@ -266,6 +280,24 @@ export class CasesService {
       summary: `${current.status} → ${input.status}`,
     });
 
+    if (input.status === "SENT_TO_SUPPLIER") {
+      await this.notifications.createForSupplierUsers(current.supplierId, {
+        organizationId,
+        type: "CASE_SENT_TO_SUPPLIER",
+        title: `Case ${current.caseNumber} needs your response`,
+        entityType: "DisputeCase",
+        entityId: id,
+      });
+    } else if (input.status === "CLOSED" && item.assigneeUserId) {
+      await this.notifications.createForUser(item.assigneeUserId, {
+        organizationId,
+        type: "CASE_CLOSED",
+        title: `Case ${current.caseNumber} was closed`,
+        entityType: "DisputeCase",
+        entityId: id,
+      });
+    }
+
     return toCase(item);
   }
 
@@ -297,6 +329,13 @@ export class CasesService {
       entityType: "DisputeCase",
       entityId: id,
       summary: "Assignee changed",
+    });
+    await this.notifications.createForUser(input.assigneeUserId, {
+      organizationId,
+      type: "CASE_ASSIGNED",
+      title: `Case ${item.caseNumber} was assigned to you`,
+      entityType: "DisputeCase",
+      entityId: id,
     });
     return toCase(item);
   }
@@ -426,7 +465,7 @@ export class CasesService {
 
     const resolution = await this.prisma.resolution.findFirst({
       where: { id: resolutionId, caseId: id },
-      select: { id: true, status: true },
+      select: { id: true, status: true, proposedByUserId: true },
     });
     if (!resolution) throw AppError.notFound("Resolution not found");
 
@@ -481,6 +520,16 @@ export class CasesService {
       entityId: id,
       summary: action === "approve" ? "Resolution approved" : "Resolution verified",
     });
+
+    if (action === "approve") {
+      await this.notifications.createForUser(resolution.proposedByUserId, {
+        organizationId,
+        type: "RESOLUTION_APPROVED",
+        title: `Your resolution on case ${item.caseNumber} was approved`,
+        entityType: "DisputeCase",
+        entityId: id,
+      });
+    }
 
     return toCase(item);
   }

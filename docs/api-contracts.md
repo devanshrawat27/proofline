@@ -2,6 +2,11 @@
 
 Base path: `/api/v1`. Health endpoints are unprefixed.
 
+Interactive docs are served at **`/docs`** (Swagger UI) with the OpenAPI 3.0 JSON at
+**`/docs-json`**. Request bodies are validated by Zod schemas in
+[`packages/shared-types`](../packages/shared-types/src); the generated spec lists all routes but
+does not yet reflect Zod DTO shapes.
+
 All responses use a consistent error shape:
 
 ```json
@@ -150,8 +155,75 @@ Events are written for key actions: `po.issued`/`po.cancelled`, `receipt.submitt
 `invoice.reviewed`, and all case actions (`case.created`, `case.status_changed`,
 `case.assigned`, `case.message_added`, `case.resolution_proposed`/`_approved`/`_verified`).
 
+### Supplier portal
+
+The supplier portal is a separate identity with its own cookie (`SUPPLIER_COOKIE_NAME`,
+default `proofline_supplier_session`). Supplier routes are public to the org guard and are
+authenticated by `SupplierAuthGuard`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/v1/supplier/auth/login` | public | Signs in a supplier user; sets the supplier cookie. |
+| POST | `/api/v1/supplier/auth/logout` | supplier | Revokes the supplier session. `204`. |
+| GET | `/api/v1/supplier/auth/me` | supplier | `{ user, supplier }`. |
+| GET | `/api/v1/supplier/cases` | supplier | Cases for the supplier's organization + supplier only. Query: `status`, `page`, `pageSize`. |
+| GET | `/api/v1/supplier/cases/:id` | supplier | Case detail with **only supplier-visible messages**; internal notes are never returned. |
+| POST | `/api/v1/supplier/cases/:id/respond` | supplier | Adds a supplier-visible message; moves `SENT_TO_SUPPLIER → SUPPLIER_RESPONDED`. |
+| POST | `/api/v1/supplier/cases/:id/proposals` | supplier | Proposes a resolution (only while `SENT_TO_SUPPLIER`/`SUPPLIER_RESPONDED`). |
+
+Every supplier query is scoped by the supplier's `organizationId` and `supplierId`; a
+supplier can never read another supplier's or tenant's cases.
+
+### Notifications
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/notifications` | session | Current user's notifications. Query: `unreadOnly`, `page`, `pageSize`. |
+| GET | `/api/v1/notifications/unread-count` | session | `{ count }`. |
+| POST | `/api/v1/notifications/:id/read` | session | Marks one notification read. `204`. |
+| POST | `/api/v1/notifications/read-all` | session | Marks all read. `204`. |
+| GET | `/api/v1/supplier/notifications` | supplier | The supplier user's notifications. |
+| GET | `/api/v1/supplier/notifications/unread-count` | supplier | `{ count }`. |
+| POST | `/api/v1/supplier/notifications/:id/read` | supplier | Marks one read. `204`. |
+| POST | `/api/v1/supplier/notifications/read-all` | supplier | Marks all read. `204`. |
+
+Notifications are created best-effort on case assignment, sending a case to the supplier
+(notifies that supplier's users), supplier responses/proposals (notifies the case assignee),
+and resolution approval (notifies the proposer). Matching **emails** are queued (BullMQ/Redis
+with 3 retries + exponential backoff) and sent over SMTP; when Redis is absent they are sent
+inline. Email never blocks the underlying business action.
+
+### Documents (attachments)
+
+Files are private, tenant-scoped, with server-generated storage keys. The MVP transport is a
+base64 JSON body (≤10 MB) backed by a local-disk storage driver; the `StorageService`
+interface maps to an S3-compatible driver for production. MIME types are allow-listed
+(PNG/JPEG/WebP/PDF).
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/documents` | `document:read` | List for an entity. Query: `entityType`, `entityId`. |
+| POST | `/api/v1/documents` | `document:write` | Upload. Body: `entityType`, `entityId`, `kind`, `visibility`, `fileName`, `mimeType`, `dataBase64`. |
+| GET | `/api/v1/documents/:id/content` | `document:read` | Streams the file (tenant-checked). |
+| DELETE | `/api/v1/documents/:id` | `document:write` | Deletes the record and stored file. |
+| GET | `/api/v1/supplier/documents` | supplier | Supplier-visible documents for one of the supplier's cases. Query: `entityId`. |
+| GET | `/api/v1/supplier/documents/:id/content` | supplier | Streams a supplier-visible file (supplier/case scoped). |
+
+### AI extraction
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/documents/:id` | `document:read` | Single document. |
+| POST | `/api/v1/documents/:id/extract` | `document:review` | Runs AI extraction and stores a `DocumentExtraction`. 400 `AI_NOT_CONFIGURED` when no provider/key. |
+| GET | `/api/v1/documents/:id/extraction` | `document:read` | Latest extraction (or null). |
+| POST | `/api/v1/documents/:id/review` | `document:review` | `CONFIRM` or `CORRECT` (with `correctedFields`). |
+
+Extraction is provider-agnostic (Gemini today) behind an interface, with strict Zod validation of
+the model output, a timeout and bounded retries. Documents are untrusted: embedded instructions
+are ignored and AI output never auto-approves or mutates business records — a human always reviews
+and confirms. If the provider is unavailable the job fails cleanly (no false success) and manual
+entry remains available.
+
 ## Planned (later phases)
 
-Document upload/processing/review, AI extraction, supplier portal (separate supplier identity),
-notifications. These are design targets only — they will be added with implementation and tests
-together.
+Email notifications (SMTP/queue).

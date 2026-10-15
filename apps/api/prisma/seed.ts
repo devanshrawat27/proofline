@@ -125,6 +125,13 @@ const SEED_PURCHASE_ORDERS: Array<{
   },
 ];
 
+const SEED_SUPPLIER_USER = {
+  supplierCode: "SUP-BRIGHTTECH",
+  email: "supplier@brighttech.local",
+  name: "Nisha Rao (BrightTech)",
+  password: "Supplier@123",
+};
+
 async function main(): Promise<void> {
   if (process.env.NODE_ENV === "production") {
     throw new Error("Refusing to seed sample data in production.");
@@ -291,6 +298,21 @@ async function main(): Promise<void> {
     }
   }
 
+  const supplierUserSupplierId = supplierIds.get(SEED_SUPPLIER_USER.supplierCode);
+  if (supplierUserSupplierId) {
+    const supplierUserPasswordHash = await bcrypt.hash(SEED_SUPPLIER_USER.password, 12);
+    await prisma.supplierUser.upsert({
+      where: { email: SEED_SUPPLIER_USER.email },
+      create: {
+        supplierId: supplierUserSupplierId,
+        email: SEED_SUPPLIER_USER.email,
+        name: SEED_SUPPLIER_USER.name,
+        passwordHash: supplierUserPasswordHash,
+      },
+      update: { name: SEED_SUPPLIER_USER.name },
+    });
+  }
+
   // eslint-disable-next-line no-console
   console.log("Seed complete.");
   // eslint-disable-next-line no-console
@@ -307,6 +329,8 @@ async function main(): Promise<void> {
   console.log(`  Purchase orders seeded: ${SEED_PURCHASE_ORDERS.length}`);
   // eslint-disable-next-line no-console
   console.log("  Invoice seeded: INV-5562 (review it to generate discrepancies)");
+  // eslint-disable-next-line no-console
+  console.log(`  Supplier portal user: ${SEED_SUPPLIER_USER.email} / ${SEED_SUPPLIER_USER.password}`);
 }
 
 main()

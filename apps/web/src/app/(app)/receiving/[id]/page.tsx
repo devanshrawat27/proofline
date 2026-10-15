@@ -9,6 +9,7 @@ import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ReceiptActions } from "@/components/receiving/receipt-actions";
+import { Attachments } from "@/components/documents/attachments";
 import { getSessionContext, serverGet } from "@/lib/server-api";
 import { formatQuantity } from "@/lib/format";
 
@@ -42,6 +43,7 @@ export default async function ReceiptDetailPage({ params }: { params: { id: stri
 
   const receipt = result.data;
   const canWrite = roleHasPermission(session.membership.role, "receipt:write");
+  const canUploadDocs = roleHasPermission(session.membership.role, "document:write");
 
   return (
     <div className="space-y-8">
@@ -121,6 +123,23 @@ export default async function ReceiptDetailPage({ params }: { params: { id: stri
           </CardBody>
         </Card>
       ) : null}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Photos &amp; documents</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <Attachments
+            apiBase="/api/v1/documents"
+            listPath={`?entityType=RECEIPT&entityId=${receipt.id}`}
+            entityType="RECEIPT"
+            entityId={receipt.id}
+            canUpload={canUploadDocs}
+            supplierUpload
+            reviewBase="/documents"
+          />
+        </CardBody>
+      </Card>
     </div>
   );
 }

@@ -42,8 +42,26 @@ explicit `onDelete`, indexes on tenant and lookup columns, `snake_case` table na
 - **CaseMessage** — case, author, `visibility` (`INTERNAL | SUPPLIER_VISIBLE`), body.
 - **CaseEvent** — append-only case timeline (type, actor, message).
 - **Resolution** — case, `type` (replacement/credit/refund/…), `status`
-  (`PROPOSED | APPROVED | VERIFIED | REJECTED`), optional amount, reference, notes, proposer and
-  approver/verifier actor + timestamps.
+  (`PROPOSED | APPROVED | VERIFIED | REJECTED`), optional amount, reference, notes, proposer
+  (`proposedByUserId` for internal or `proposedByName` for a supplier) and approver/verifier
+  actor + timestamps.
+- **SupplierUser** — a supplier's own portal identity (supplier, unique email, password hash,
+  name, status). Separate from organization members.
+- **SupplierSession** — supplier portal sessions (`tokenHash`, expiry, audit fields). The raw
+  token lives only in the supplier HttpOnly cookie.
+- **Notification** — in-app notification for an org `User` (`recipientUserId`) or a
+  `SupplierUser` (`recipientSupplierUserId`), `type`, title/body, `entityType`/`entityId`,
+  optional `readAt`.
+- **Document** — private attachment linked to an entity (`PURCHASE_ORDER | RECEIPT | INVOICE |
+  CASE`), `kind`, `visibility` (`INTERNAL | SUPPLIER_VISIBLE`), file name/MIME/size, server-generated
+  `storageKey`, `checksum`, uploader and `extractionStatus`.
+- **DocumentExtraction** — provider/model/schema version, `rawJson`, normalized `fields`, overall
+  `confidence`, `reviewStatus` (`PENDING | CORRECTED | CONFIRMED | REJECTED`), optional corrected
+  fields, error and reviewer. One row per extraction attempt (history preserved).
+
+Messages and resolutions store an `authorName`/`proposedByName` snapshot so supplier-authored
+entries (which have no organization `User`) render correctly. Supplier cases are scoped by
+`(organizationId, supplierId)`.
 
 Money is stored as integer minor units (paise); quantities use a decimal type. Line totals are
 computed deterministically on the server (`round(quantity × unitPriceMinor)`). On receipt
@@ -55,7 +73,7 @@ state machine; a resolution must be approved before it can be verified.
 
 ## Planned (later phases)
 
-SupplierUser, Document, DocumentExtraction, Notification, AuditEvent.
+Email notifications (SMTP/queue) and the competitor-research + AI-evaluation docs.
 
 ## Integrity rules (applied now and enforced going forward)
 

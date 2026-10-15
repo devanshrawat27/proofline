@@ -101,8 +101,11 @@ sample seed, CI, docs. Phase 2 (core operations) is well underway: **suppliers**
 receipts + PO status recomputation), the **invoice + deterministic discrepancy
 engine** and the **dispute case workspace** (state machine, timeline, internal/
 supplier-visible messages, resolution approve/verify), the **real dashboard +
-reports** (open cases, disputed value, discrepancy/supplier breakdowns) and an
-**append-only audit log** are implemented end-to-end with tenant scoping, RBAC, Zod
-validation, tests and docs. Remaining: receipt/document attachments & file storage,
-AI document extraction, supplier portal (separate supplier identity), notifications,
-polish.
+reports**, an **append-only audit log**, the **supplier portal** (separate supplier
+identity with its own cookie, supplier-scoped case access), **in-app notifications**,
+**document attachments** (private local-disk storage, tenant-scoped) and **AI document
+extraction + review** (Gemini, schema-validated, human-confirmed), and **email
+notifications** (BullMQ/Redis queue with retries, SMTP via Mailpit locally, inline
+fallback when Redis is absent) are implemented end-to-end with tenant scoping, RBAC,
+Zod validation, tests and docs. OpenAPI/Swagger is served at `/docs`. Remaining: polish
+(Playwright E2E, accessibility pass).

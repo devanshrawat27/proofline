@@ -1,6 +1,7 @@
 import { canTransition } from "@proofline/shared-types";
 import type { PrismaService } from "../../common/prisma/prisma.service";
 import { AppError } from "../../common/errors/app-error";
+import type { NotificationsService } from "../notifications/notifications.service";
 import { CasesService } from "./cases.service";
 
 describe("case state machine", () => {
@@ -52,7 +53,11 @@ function makePrisma(): MockedPrisma {
 }
 
 function service(mocked: MockedPrisma): CasesService {
-  return new CasesService(mocked as unknown as PrismaService);
+  const notifications = {
+    createForUser: jest.fn().mockResolvedValue(undefined),
+    createForSupplierUsers: jest.fn().mockResolvedValue(undefined),
+  } as unknown as NotificationsService;
+  return new CasesService(mocked as unknown as PrismaService, notifications);
 }
 
 describe("CasesService", () => {

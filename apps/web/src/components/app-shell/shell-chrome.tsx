@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   AlertTriangle,
   BarChart3,
+  Bell,
   Building2,
   FileText,
   FolderOpen,
@@ -47,9 +48,11 @@ const NAV: NavItem[] = [
 
 export function ShellChrome({
   session,
+  unreadCount = 0,
   children,
 }: {
   session: SessionContext;
+  unreadCount?: number;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -117,6 +120,18 @@ export function ShellChrome({
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/notifications"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl text-subtle transition-colors hover:bg-app hover:text-ink"
+              aria-label={unreadCount > 0 ? `${unreadCount} unread notifications` : "Notifications"}
+            >
+              <Bell className="h-4 w-4" aria-hidden />
+              {unreadCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-critical px-1 text-[10px] font-semibold text-white">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              ) : null}
+            </Link>
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium text-ink">{session.user.name}</p>
               <p className="text-xs text-subtle">{session.membership.role.replace(/_/g, " ").toLowerCase()}</p>

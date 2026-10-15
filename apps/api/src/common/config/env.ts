@@ -13,7 +13,14 @@ const envSchema = z.object({
 
   REDIS_URL: z.string().url().optional(),
 
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().positive().default(1025),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  SMTP_FROM: z.string().default("Proofline <no-reply@proofline.local>"),
+
   SESSION_COOKIE_NAME: z.string().min(1).default("proofline_session"),
+  SUPPLIER_COOKIE_NAME: z.string().min(1).default("proofline_supplier_session"),
   SESSION_SECRET: z
     .string()
     .min(16, "SESSION_SECRET must be at least 16 characters")
@@ -27,7 +34,9 @@ const envSchema = z.object({
 
   AI_PROVIDER: z.enum(["gemini", "none"]).default("none"),
   GEMINI_API_KEY: z.string().optional(),
-  GEMINI_MODEL: z.string().default("gemini-1.5-flash"),
+  GEMINI_MODEL: z.string().default("gemini-3.1-flash-lite"),
+  AI_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(45_000),
+  AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(3),
 
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
 });

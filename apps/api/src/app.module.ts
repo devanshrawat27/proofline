@@ -14,6 +14,9 @@ import { DiscrepanciesModule } from "./modules/discrepancies/discrepancies.modul
 import { CasesModule } from "./modules/cases/cases.module";
 import { ReportingModule } from "./modules/reporting/reporting.module";
 import { AuditModule } from "./modules/audit/audit.module";
+import { SupplierModule } from "./modules/supplier/supplier.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
+import { DocumentsModule } from "./modules/documents/documents.module";
 import { HealthModule } from "./modules/health/health.module";
 
 @Module({
@@ -30,6 +33,9 @@ import { HealthModule } from "./modules/health/health.module";
     CasesModule,
     ReportingModule,
     AuditModule,
+    SupplierModule,
+    NotificationsModule,
+    DocumentsModule,
     HealthModule,
   ],
   providers: [

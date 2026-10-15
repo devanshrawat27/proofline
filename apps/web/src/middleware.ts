@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "proofline_session";
+const SUPPLIER_COOKIE_NAME =
+  process.env.SUPPLIER_COOKIE_NAME ?? "proofline_supplier_session";
 
 const PROTECTED_PREFIXES = [
   "/overview",
@@ -16,6 +18,7 @@ const PROTECTED_PREFIXES = [
   "/documents",
   "/reports",
   "/audit",
+  "/notifications",
 ];
 
 /**
@@ -25,6 +28,20 @@ const PROTECTED_PREFIXES = [
  */
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
+
+  // Supplier portal has its own identity and cookie.
+  const isSupplierLogin = pathname === "/supplier/login";
+  const isSupplierArea = pathname === "/supplier" || pathname.startsWith("/supplier/");
+  if (isSupplierArea && !isSupplierLogin) {
+    if (!request.cookies.get(SUPPLIER_COOKIE_NAME)?.value) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/supplier/login";
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   const isProtected = PROTECTED_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
@@ -54,5 +71,7 @@ export const config = {
     "/documents/:path*",
     "/reports/:path*",
     "/audit/:path*",
+    "/notifications/:path*",
+    "/supplier/:path*",
   ],
 };

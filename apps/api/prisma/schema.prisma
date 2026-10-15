@@ -122,6 +122,48 @@ enum AuditActorType {
   SYSTEM
 }
 
+enum NotificationType {
+  CASE_ASSIGNED
+  CASE_SENT_TO_SUPPLIER
+  SUPPLIER_RESPONDED
+  RESOLUTION_PROPOSED
+  RESOLUTION_APPROVED
+  CASE_CLOSED
+}
+
+enum DocumentEntityType {
+  PURCHASE_ORDER
+  RECEIPT
+  INVOICE
+  CASE
+}
+
+enum DocumentKind {
+  PHOTO
+  CHALLAN
+  INVOICE_FILE
+  OTHER
+}
+
+enum DocumentVisibility {
+  INTERNAL
+  SUPPLIER_VISIBLE
+}
+
+enum DocumentExtractionStatus {
+  NOT_REQUESTED
+  PENDING
+  DONE
+  FAILED
+}
+
+enum ExtractionReviewStatus {
+  PENDING
+  CORRECTED
+  CONFIRMED
+  REJECTED
+}
+
 model Organization {
   id              String   @id @default(uuid()) @db.Uuid
   name            String
@@ -142,6 +184,9 @@ model Organization {
   discrepancies Discrepancy[]
   cases       DisputeCase[]
   auditEvents AuditEvent[]
+  notifications Notification[]
+  documents   Document[]
+  documentExtractions DocumentExtraction[]
 
   @@map("organizations")
 }
@@ -166,6 +211,7 @@ model User {
   proposedResolutions Resolution[] @relation("ResolutionProposedBy")
   approvedResolutions Resolution[] @relation("ResolutionApprovedBy")
   verifiedResolutions Resolution[] @relation("ResolutionVerifiedBy")
+  notifications  Notification[] @relation("NotificationRecipient")
 
   @@map("users")
 }
@@ -249,6 +295,7 @@ model Supplier {
   purchaseOrders PurchaseOrder[]
   invoices       Invoice[]
   cases          DisputeCase[]
+  users          SupplierUser[]
 
   @@unique([organizationId, code])
   @@index([organizationId])
@@ -465,6 +512,7 @@ model CaseMessage {
   id           String            @id @default(uuid()) @db.Uuid
   caseId       String            @db.Uuid
   authorUserId String?           @db.Uuid
+  authorName   String?
   visibility   MessageVisibility @default(INTERNAL)
   body         String
   createdAt    DateTime          @default(now())
@@ -499,7 +547,8 @@ model Resolution {
   proposedAmountMinor Int?
   reference           String?          @db.VarChar(120)
   notes               String?
-  proposedByUserId    String           @db.Uuid
+  proposedByUserId    String?          @db.Uuid
+  proposedByName      String?
   approvedByUserId    String?          @db.Uuid
   verifiedByUserId    String?          @db.Uuid
   proposedAt          DateTime         @default(now())
@@ -507,12 +556,120 @@ model Resolution {
   verifiedAt          DateTime?
 
   case       DisputeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  proposedBy User        @relation("ResolutionProposedBy", fields: [proposedByUserId], references: [id])
+  proposedBy User?       @relation("ResolutionProposedBy", fields: [proposedByUserId], references: [id])
   approvedBy User?       @relation("ResolutionApprovedBy", fields: [approvedByUserId], references: [id])
   verifiedBy User?       @relation("ResolutionVerifiedBy", fields: [verifiedByUserId], references: [id])
 
   @@index([caseId])
   @@map("resolutions")
+}
+
+model SupplierUser {
+  id           String     @id @default(uuid()) @db.Uuid
+  supplierId   String     @db.Uuid
+  email        String     @unique
+  name         String
+  passwordHash String
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  supplier Supplier          @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  sessions SupplierSession[]
+  notifications Notification[] @relation("SupplierNotificationRecipient")
+
+  @@index([supplierId])
+  @@map("supplier_users")
+}
+
+model SupplierSession {
+  id             String    @id @default(uuid()) @db.Uuid
+  supplierUserId String    @db.Uuid
+  tokenHash      String    @unique
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+  lastUsedAt     DateTime?
+  revokedAt      DateTime?
+  userAgent      String?
+  ipAddress      String?
+
+  supplierUser SupplierUser @relation(fields: [supplierUserId], references: [id], onDelete: Cascade)
+
+  @@index([supplierUserId])
+  @@map("supplier_sessions")
+}
+
+model Notification {
+  id                      String           @id @default(uuid()) @db.Uuid
+  organizationId          String           @db.Uuid
+  recipientUserId         String?          @db.Uuid
+  recipientSupplierUserId String?          @db.Uuid
+  type                    NotificationType
+  title                   String
+  body                    String?
+  entityType              String           @db.VarChar(40)
+  entityId                String?          @db.Uuid
+  readAt                  DateTime?
+  createdAt               DateTime         @default(now())
+
+  organization         Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  recipientUser        User?         @relation("NotificationRecipient", fields: [recipientUserId], references: [id], onDelete: Cascade)
+  recipientSupplierUser SupplierUser? @relation("SupplierNotificationRecipient", fields: [recipientSupplierUserId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([recipientUserId, readAt])
+  @@index([recipientSupplierUserId, readAt])
+  @@map("notifications")
+}
+
+model Document {
+  id                 String                   @id @default(uuid()) @db.Uuid
+  organizationId     String                   @db.Uuid
+  entityType         DocumentEntityType
+  entityId           String                   @db.Uuid
+  kind               DocumentKind             @default(OTHER)
+  visibility         DocumentVisibility       @default(INTERNAL)
+  fileName           String
+  mimeType           String                   @db.VarChar(100)
+  sizeBytes          Int
+  storageKey         String                   @unique
+  checksum           String                   @db.VarChar(64)
+  uploadedByUserId   String?                  @db.Uuid
+  extractionStatus   DocumentExtractionStatus @default(NOT_REQUESTED)
+  createdAt          DateTime                 @default(now())
+
+  organization Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  extractions  DocumentExtraction[]
+
+  @@index([organizationId])
+  @@index([entityType, entityId])
+  @@map("documents")
+}
+
+model DocumentExtraction {
+  id               String                 @id @default(uuid()) @db.Uuid
+  organizationId   String                 @db.Uuid
+  documentId       String                 @db.Uuid
+  provider         String                 @db.VarChar(40)
+  model            String                 @db.VarChar(80)
+  schemaVersion    String                 @db.VarChar(20)
+  rawJson          Json
+  fields           Json
+  confidence       Float?
+  reviewStatus     ExtractionReviewStatus @default(PENDING)
+  correctedFields  Json?
+  error            String?
+  reviewedByUserId String?                @db.Uuid
+  reviewedAt       DateTime?
+  createdAt        DateTime               @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  document     Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([organizationId])
+  @@map("document_extractions")
 }
 
 model AuditEvent {
