@@ -18,9 +18,10 @@ const envSchema = z.object({
   REDIS_URL: z.preprocess((value) => {
     if (typeof value !== "string") return value;
     // Tolerate pasted values like `redis-cli --tls -u rediss://...` by
-    // extracting the URL, and force TLS for Upstash hosts.
+    // extracting the URL, force TLS for Upstash hosts, and treat anything that
+    // is not a redis URL as "not configured" (the queue degrades to inline send).
     const match = value.match(/rediss?:\/\/[^\s"']+/);
-    if (!match) return value;
+    if (!match) return undefined;
     let url = match[0];
     if (url.startsWith("redis://") && /\.upstash\.io/i.test(url)) {
       url = `rediss://${url.slice("redis://".length)}`;
