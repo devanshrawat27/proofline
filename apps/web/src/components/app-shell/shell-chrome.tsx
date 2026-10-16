@@ -20,6 +20,8 @@ import {
   Users,
 } from "lucide-react";
 import type { SessionContext } from "@/lib/server-api";
+import { roleHasPermission } from "@proofline/shared-types";
+import type { Permission } from "@proofline/shared-types";
 import { apiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/logo";
@@ -28,21 +30,22 @@ interface NavItem {
   href: string;
   label: string;
   icon: typeof LayoutDashboard;
-  disabled?: boolean;
+  /** Only shown when the signed-in role holds this permission. */
+  permission?: Permission;
 }
 
 const NAV: NavItem[] = [
   { href: "/overview", label: "Overview", icon: LayoutDashboard },
-  { href: "/exceptions", label: "Exceptions", icon: AlertTriangle },
-  { href: "/cases", label: "Cases", icon: Gavel },
-  { href: "/purchase-orders", label: "Purchase Orders", icon: FileText },
-  { href: "/receiving", label: "Receiving", icon: PackageCheck },
-  { href: "/invoices", label: "Invoices", icon: ReceiptText },
-  { href: "/suppliers", label: "Suppliers", icon: Building2 },
-  { href: "/documents", label: "Documents", icon: FolderOpen },
-  { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/audit", label: "Audit log", icon: ScrollText },
-  { href: "/members", label: "Members & roles", icon: Users },
+  { href: "/exceptions", label: "Exceptions", icon: AlertTriangle, permission: "discrepancy:read" },
+  { href: "/cases", label: "Cases", icon: Gavel, permission: "case:read" },
+  { href: "/purchase-orders", label: "Purchase Orders", icon: FileText, permission: "po:read" },
+  { href: "/receiving", label: "Receiving", icon: PackageCheck, permission: "receipt:read" },
+  { href: "/invoices", label: "Invoices", icon: ReceiptText, permission: "invoice:read" },
+  { href: "/suppliers", label: "Suppliers", icon: Building2, permission: "supplier:read" },
+  { href: "/documents", label: "Documents", icon: FolderOpen, permission: "document:read" },
+  { href: "/reports", label: "Reports", icon: BarChart3, permission: "report:read" },
+  { href: "/audit", label: "Audit log", icon: ScrollText, permission: "audit:read" },
+  { href: "/members", label: "Members & roles", icon: Users, permission: "member:read" },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -77,24 +80,10 @@ export function ShellChrome({
           <span className="text-sm font-semibold tracking-tight text-ink">Proofline</span>
         </div>
         <nav className="flex-1 space-y-0.5 px-3 py-2" aria-label="Primary">
-          {NAV.map((item) => {
+          {NAV.filter(
+            (item) => !item.permission || roleHasPermission(session.membership.role, item.permission),
+          ).map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-            if (item.disabled) {
-              return (
-                <span
-                  key={item.href}
-                  aria-disabled="true"
-                  title="Not available yet"
-                  className="flex cursor-not-allowed items-center justify-between rounded-xl px-3 py-2 text-sm text-subtle/60"
-                >
-                  <span className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4" aria-hidden />
-                    {item.label}
-                  </span>
-                  <span className="text-[10px] font-medium uppercase">soon</span>
-                </span>
-              );
-            }
             return (
               <Link
                 key={item.href}
