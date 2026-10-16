@@ -1,11 +1,17 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Res } from "@nestjs/common";
 import type { Response } from "express";
 import {
+  documentLibraryQuerySchema,
   documentListQuerySchema,
   extractionReviewSchema,
   uploadDocumentSchema,
 } from "@proofline/shared-types";
-import type { DocumentListQuery, ExtractionReviewInput, UploadDocumentInput } from "@proofline/shared-types";
+import type {
+  DocumentLibraryQuery,
+  DocumentListQuery,
+  ExtractionReviewInput,
+  UploadDocumentInput,
+} from "@proofline/shared-types";
 import { CurrentUser, RequirePermissions } from "../../common/auth/auth.decorators";
 import type { AuthenticatedUser } from "../../common/auth/auth.types";
 import { ZodValidationPipe } from "../../common/http/zod-validation.pipe";
@@ -30,6 +36,15 @@ export class DocumentsController {
     @Query(new ZodValidationPipe(documentListQuerySchema)) query: DocumentListQuery,
   ) {
     return this.documents.list(user.organizationId, query);
+  }
+
+  @RequirePermissions("document:read")
+  @Get("library")
+  library(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query(new ZodValidationPipe(documentLibraryQuerySchema)) query: DocumentLibraryQuery,
+  ) {
+    return this.documents.listLibrary(user.organizationId, query);
   }
 
   @RequirePermissions("document:write")

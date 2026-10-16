@@ -203,6 +203,7 @@ interface maps to an S3-compatible driver for production. MIME types are allow-l
 | Method | Path | Permission | Description |
 | --- | --- | --- | --- |
 | GET | `/api/v1/documents` | `document:read` | List for an entity. Query: `entityType`, `entityId`. |
+| GET | `/api/v1/documents/library` | `document:read` | Paginated list across entities. Query: `search`, `entityType`, `kind`, `page`, `pageSize`. |
 | POST | `/api/v1/documents` | `document:write` | Upload. Body: `entityType`, `entityId`, `kind`, `visibility`, `fileName`, `mimeType`, `dataBase64`. |
 | GET | `/api/v1/documents/:id/content` | `document:read` | Streams the file (tenant-checked). |
 | DELETE | `/api/v1/documents/:id` | `document:write` | Deletes the record and stored file. |

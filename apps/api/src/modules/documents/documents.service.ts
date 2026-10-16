@@ -3,7 +3,9 @@ import type { Document } from "@prisma/client";
 import type {
   DocumentDto,
   DocumentEntityType,
+  DocumentLibraryQuery,
   DocumentListQuery,
+  Paginated,
   UploadDocumentInput,
 } from "@proofline/shared-types";
 import { MAX_DOCUMENT_BYTES } from "@proofline/shared-types";
@@ -71,6 +73,41 @@ export class DocumentsService {
       : [];
     const nameById = new Map(users.map((u) => [u.id, u.name]));
     return documents.map((d) => toDto(d, d.uploadedByUserId ? nameById.get(d.uploadedByUserId) ?? null : null));
+  }
+
+  async listLibrary(organizationId: string, query: DocumentLibraryQuery): Promise<Paginated<DocumentDto>> {
+    const { search, entityType, kind, page, pageSize } = query;
+    const where = {
+      organizationId,
+      ...(entityType ? { entityType } : {}),
+      ...(kind ? { kind } : {}),
+      ...(search ? { fileName: { contains: search, mode: "insensitive" as const } } : {}),
+    };
+
+    const [total, documents] = await this.prisma.$transaction([
+      this.prisma.document.count({ where }),
+      this.prisma.document.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    const userIds = [
+      ...new Set(documents.map((d) => d.uploadedByUserId).filter((id): id is string => Boolean(id))),
+    ];
+    const users = userIds.length
+      ? await this.prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true } })
+      : [];
+    const nameById = new Map(users.map((u) => [u.id, u.name]));
+
+    return {
+      items: documents.map((d) => toDto(d, d.uploadedByUserId ? nameById.get(d.uploadedByUserId) ?? null : null)),
+      total,
+      page,
+      pageSize,
+    };
   }
 
   async get(organizationId: string, id: string): Promise<DocumentDto> {

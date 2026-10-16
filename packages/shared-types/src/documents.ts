@@ -49,6 +49,15 @@ export const supplierDocumentListQuerySchema = z.object({
 });
 export type SupplierDocumentListQuery = z.infer<typeof supplierDocumentListQuerySchema>;
 
+export const documentLibraryQuerySchema = z.object({
+  search: z.string().trim().max(160).optional(),
+  entityType: documentEntityTypeSchema.optional(),
+  kind: documentKindSchema.optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+});
+export type DocumentLibraryQuery = z.infer<typeof documentLibraryQuerySchema>;
+
 export interface DocumentDto {
   id: string;
   entityType: DocumentEntityType;

@@ -39,7 +39,7 @@ const NAV: NavItem[] = [
   { href: "/receiving", label: "Receiving", icon: PackageCheck },
   { href: "/invoices", label: "Invoices", icon: ReceiptText },
   { href: "/suppliers", label: "Suppliers", icon: Building2 },
-  { href: "/documents", label: "Documents", icon: FolderOpen, disabled: true },
+  { href: "/documents", label: "Documents", icon: FolderOpen },
   { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/audit", label: "Audit log", icon: ScrollText },
   { href: "/members", label: "Members & roles", icon: Users },

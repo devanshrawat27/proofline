@@ -37,11 +37,11 @@ export default async function DocumentDetailPage({ params }: { params: { id: str
   return (
     <div className="space-y-8">
       <Link
-        href="/overview"
+        href="/documents"
         className="inline-flex items-center gap-1.5 text-sm text-subtle transition-colors hover:text-ink"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
-        Back
+        Back to documents
       </Link>
 
       <PageHeader
