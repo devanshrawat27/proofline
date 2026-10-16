@@ -25,5 +25,6 @@ RUN pnpm --filter @proofline/shared-types build \
 ENV NODE_ENV=production
 EXPOSE 4000
 
-# Migrate (with retries for a cold serverless DB) then start.
-CMD ["sh", "-c", "attempt=1; while true; do pnpm --filter @proofline/api exec prisma migrate deploy && break; if [ $attempt -ge 6 ]; then echo 'migrate deploy failed after retries'; exit 1; fi; attempt=$((attempt+1)); echo 'retrying migrate in 5s...'; sleep 5; done; exec node apps/api/dist/main.js"]
+# Migrate if possible, but never block startup (schema is applied via CI/local;
+# a stuck advisory lock on a serverless DB must not take the service down).
+CMD ["sh", "-c", "pnpm --filter @proofline/api exec prisma migrate deploy || echo 'WARN: migrate deploy failed (schema likely already applied); starting API anyway'; exec node apps/api/dist/main.js"]
