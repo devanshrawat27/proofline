@@ -121,7 +121,7 @@ export function DocumentReview({
             extraction: {document.extractionStatus.toLowerCase()}
           </StatusBadge>
           {canReview ? (
-            <Button size="sm" onClick={extract} disabled={busy}>
+            <Button size="sm" onClick={extract} loading={busy}>
               <Sparkles className="h-4 w-4" aria-hidden />
               {busy ? "Working…" : extraction ? "Re-extract" : "Extract with AI"}
             </Button>
@@ -192,10 +192,10 @@ export function DocumentReview({
 
           {canReview ? (
             <div className="flex flex-wrap gap-2 border-t border-line pt-4">
-              <Button size="sm" onClick={() => review("CONFIRM")} disabled={busy}>
+              <Button size="sm" onClick={() => review("CONFIRM")} loading={busy}>
                 Confirm as-is
               </Button>
-              <Button size="sm" variant="secondary" onClick={() => review("CORRECT")} disabled={busy}>
+              <Button size="sm" variant="secondary" onClick={() => review("CORRECT")} loading={busy}>
                 Save corrections
               </Button>
             </div>

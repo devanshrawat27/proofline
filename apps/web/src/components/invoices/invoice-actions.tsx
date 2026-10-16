@@ -38,7 +38,7 @@ export function InvoiceActions({
   return (
     <div className="space-y-3">
       {error ? <Alert tone="error">{error}</Alert> : null}
-      <Button onClick={review} disabled={busy}>
+      <Button onClick={review} loading={busy}>
         {busy ? "Reviewing…" : "Review & detect discrepancies"}
       </Button>
     </div>

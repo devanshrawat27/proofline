@@ -96,9 +96,14 @@ export function SignupForm() {
           />
           <FieldError>{fieldErrors.password}</FieldError>
         </div>
-        <Button type="submit" className="w-full" disabled={submitting}>
+        <Button type="submit" className="w-full" loading={submitting}>
           {submitting ? "Creating…" : "Create organization"}
         </Button>
+        {submitting ? (
+          <p className="text-center text-xs text-subtle">
+            Waking the server ({">"}30s on the first request) and creating your workspace…
+          </p>
+        ) : null}
       </form>
 
       <p className="mt-5 text-sm text-subtle">

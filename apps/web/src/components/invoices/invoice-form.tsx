@@ -312,7 +312,7 @@ export function InvoiceForm({
       </div>
 
       <div className="flex justify-end border-t border-line pt-4">
-        <Button type="submit" disabled={submitting}>
+        <Button type="submit" loading={submitting}>
           {submitting ? "Saving…" : "Create invoice"}
         </Button>
       </div>

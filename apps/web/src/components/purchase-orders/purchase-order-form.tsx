@@ -307,7 +307,7 @@ export function PurchaseOrderForm({
         <span className="text-sm font-medium text-ink">
           Estimated total: <span className="tabular-nums">{formatMinor(estimatedTotal)}</span>
         </span>
-        <Button type="submit" disabled={submitting}>
+        <Button type="submit" loading={submitting}>
           {submitting ? "Saving…" : editing ? "Save changes" : "Create purchase order"}
         </Button>
       </div>

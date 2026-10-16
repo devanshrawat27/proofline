@@ -68,7 +68,8 @@ export function SupplierCaseActions({ caseData }: { caseData: SupplierCaseDto })
         <div className="mt-3">
           <Button
             size="sm"
-            disabled={busy || body.trim().length === 0}
+            loading={busy}
+            disabled={body.trim().length === 0}
             onClick={async () => {
               const ok = await post(`/api/v1/supplier/cases/${caseData.id}/respond`, { body });
               if (ok) setBody("");
@@ -109,7 +110,7 @@ export function SupplierCaseActions({ caseData }: { caseData: SupplierCaseDto })
           <div className="mt-3">
             <Button
               size="sm"
-              disabled={busy}
+              loading={busy}
               onClick={async () => {
                 const ok = await post(`/api/v1/supplier/cases/${caseData.id}/proposals`, {
                   type,

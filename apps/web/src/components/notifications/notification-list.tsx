@@ -47,7 +47,7 @@ export function NotificationList({
       <CardHeader className="flex items-center justify-between">
         <CardTitle>All notifications ({items.length})</CardTitle>
         {hasUnread ? (
-          <Button variant="secondary" size="sm" onClick={markAll} disabled={busy}>
+          <Button variant="secondary" size="sm" onClick={markAll} loading={busy}>
             {busy ? "Marking…" : "Mark all read"}
           </Button>
         ) : null}

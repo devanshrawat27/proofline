@@ -102,7 +102,7 @@ export function InviteMemberForm({ canInvite }: { canInvite: boolean }) {
             ))}
           </Select>
         </div>
-        <Button type="submit" disabled={submitting} className="sm:mb-0.5">
+        <Button type="submit" loading={submitting} className="sm:mb-0.5">
           {submitting ? "Sending…" : "Send invite"}
         </Button>
       </div>

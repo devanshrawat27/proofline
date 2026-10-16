@@ -78,7 +78,7 @@ export function CaseActions({
                 key={status}
                 variant={status === "CANCELLED" ? "secondary" : "primary"}
                 size="sm"
-                disabled={busy}
+                loading={busy}
                 onClick={() => run(`/api/v1/cases/${caseData.id}/transitions`, { status })}
               >
                 {statusLabel(status)}
@@ -118,7 +118,7 @@ export function CaseActions({
           <div className="mt-3">
             <Button
               size="sm"
-              disabled={busy}
+              loading={busy}
               onClick={async () => {
                 const ok = await run(`/api/v1/cases/${caseData.id}/resolutions`, {
                   type: resolutionType,
@@ -259,12 +259,12 @@ function ResolutionRow({
       </p>
       <div className="mt-2 flex gap-2">
         {resolution.status === "PROPOSED" && canApprove ? (
-          <Button size="sm" disabled={busy} onClick={() => onAction(`/api/v1/cases/${caseId}/resolutions/${resolution.id}/approve`)}>
+          <Button size="sm" loading={busy} onClick={() => onAction(`/api/v1/cases/${caseId}/resolutions/${resolution.id}/approve`)}>
             Approve
           </Button>
         ) : null}
         {resolution.status === "APPROVED" && canVerify ? (
-          <Button size="sm" disabled={busy} onClick={() => onAction(`/api/v1/cases/${caseId}/resolutions/${resolution.id}/verify`)}>
+          <Button size="sm" loading={busy} onClick={() => onAction(`/api/v1/cases/${caseId}/resolutions/${resolution.id}/verify`)}>
             Verify
           </Button>
         ) : null}

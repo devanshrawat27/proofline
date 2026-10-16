@@ -45,6 +45,7 @@ export function LoginForm() {
             type="email"
             autoComplete="email"
             required
+            disabled={submitting}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -56,14 +57,20 @@ export function LoginForm() {
             type="password"
             autoComplete="current-password"
             required
+            disabled={submitting}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <FieldError />
         </div>
-        <Button type="submit" className="w-full" disabled={submitting}>
+        <Button type="submit" className="w-full" loading={submitting}>
           {submitting ? "Signing in…" : "Sign in"}
         </Button>
+        {submitting ? (
+          <p className="text-center text-xs text-subtle">
+            Waking the server ({">"}30s on the first request) and checking your details…
+          </p>
+        ) : null}
       </form>
 
       <p className="mt-5 text-sm text-subtle">

@@ -38,7 +38,7 @@ export function ReceiptActions({
   return (
     <div className="space-y-3">
       {error ? <Alert tone="error">{error}</Alert> : null}
-      <Button onClick={submit} disabled={busy}>
+      <Button onClick={submit} loading={busy}>
         {busy ? "Submitting…" : "Submit receipt"}
       </Button>
     </div>

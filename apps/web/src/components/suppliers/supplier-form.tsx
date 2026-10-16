@@ -227,7 +227,7 @@ export function SupplierForm({
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit" disabled={submitting}>
+        <Button type="submit" loading={submitting}>
           {submitting ? "Saving…" : mode === "create" ? "Create supplier" : "Save changes"}
         </Button>
       </div>

@@ -141,7 +141,7 @@ export function CaseForm({
       </div>
 
       <div className="flex justify-end border-t border-line pt-4">
-        <Button type="submit" disabled={submitting}>
+        <Button type="submit" loading={submitting}>
           {submitting ? "Creating…" : "Create case"}
         </Button>
       </div>

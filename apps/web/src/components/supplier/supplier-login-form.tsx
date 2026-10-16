@@ -53,6 +53,7 @@ export function SupplierLoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@supplier.com"
+          disabled={submitting}
         />
         <FieldError>{fieldError}</FieldError>
       </div>
@@ -63,11 +64,17 @@ export function SupplierLoginForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={submitting}
         />
       </div>
-      <Button type="submit" disabled={submitting} className="w-full">
+      <Button type="submit" className="w-full" loading={submitting}>
         {submitting ? "Signing in…" : "Sign in"}
       </Button>
+      {submitting ? (
+        <p className="text-center text-xs text-subtle">
+          Waking the server ({">"}30s on the first request) and checking your details…
+        </p>
+      ) : null}
     </form>
   );
 }
