@@ -25,5 +25,5 @@ RUN pnpm --filter @proofline/shared-types build \
 ENV NODE_ENV=production
 EXPOSE 4000
 
-# Migrate then start (idempotent; safe on every boot).
-CMD ["sh", "-c", "pnpm --filter @proofline/api exec prisma migrate deploy && node apps/api/dist/main.js"]
+# Migrate (with retries for a cold serverless DB) then start.
+CMD ["sh", "-c", "attempt=1; while true; do pnpm --filter @proofline/api exec prisma migrate deploy && break; if [ $attempt -ge 6 ]; then echo 'migrate deploy failed after retries'; exit 1; fi; attempt=$((attempt+1)); echo 'retrying migrate in 5s...'; sleep 5; done; exec node apps/api/dist/main.js"]
