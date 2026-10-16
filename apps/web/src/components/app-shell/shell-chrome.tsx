@@ -112,12 +112,6 @@ export function ShellChrome({
         </nav>
 
         <div className="border-t border-line p-3">
-          <div className="mb-1.5 px-2">
-            <p className="truncate text-sm font-medium text-ink">{session.user.name}</p>
-            <p className="truncate text-xs text-subtle">
-              {session.membership.role.replace(/_/g, " ").toLowerCase()}
-            </p>
-          </div>
           <button
             onClick={logout}
             disabled={loggingOut}
@@ -149,6 +143,12 @@ export function ShellChrome({
                 </span>
               ) : null}
             </Link>
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-medium text-ink">{session.user.name}</p>
+              <p className="text-xs text-subtle">
+                {session.membership.role.replace(/_/g, " ").toLowerCase()}
+              </p>
+            </div>
             <button
               onClick={logout}
               disabled={loggingOut}
