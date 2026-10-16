@@ -110,6 +110,23 @@ export function ShellChrome({
             );
           })}
         </nav>
+
+        <div className="border-t border-line p-3">
+          <div className="mb-1.5 px-2">
+            <p className="truncate text-sm font-medium text-ink">{session.user.name}</p>
+            <p className="truncate text-xs text-subtle">
+              {session.membership.role.replace(/_/g, " ").toLowerCase()}
+            </p>
+          </div>
+          <button
+            onClick={logout}
+            disabled={loggingOut}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-subtle transition-colors hover:bg-app hover:text-ink disabled:opacity-50"
+          >
+            <LogOut className="h-4 w-4" aria-hidden />
+            {loggingOut ? "Signing out…" : "Sign out"}
+          </button>
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -119,7 +136,7 @@ export function ShellChrome({
               {session.organization?.name ?? "No organization"}
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link
               href="/notifications"
               className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl text-subtle transition-colors hover:bg-app hover:text-ink"
@@ -132,17 +149,14 @@ export function ShellChrome({
                 </span>
               ) : null}
             </Link>
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-ink">{session.user.name}</p>
-              <p className="text-xs text-subtle">{session.membership.role.replace(/_/g, " ").toLowerCase()}</p>
-            </div>
             <button
               onClick={logout}
               disabled={loggingOut}
-              className="inline-flex h-9 items-center gap-2 rounded-xl border border-line px-3 text-sm text-subtle transition-colors hover:bg-app hover:text-ink disabled:opacity-50"
+              aria-label="Sign out"
+              title="Sign out"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-subtle transition-colors hover:bg-app hover:text-ink disabled:opacity-50 md:hidden"
             >
               <LogOut className="h-4 w-4" aria-hidden />
-              {loggingOut ? "Signing out…" : "Sign out"}
             </button>
           </div>
         </header>
