@@ -1,0 +1,40 @@
+{
+  "poNumber": "VID-767665",
+  "invoiceNumber": "INV-VID-767665",
+  "caseUrl": "/cases/e4c15931-563b-4999-b7f9-430457f11114",
+  "marks": {
+    "01-landing": {
+      "seconds": 6.8
+    },
+    "02-manager-login": {
+      "seconds": 10.7
+    },
+    "03-manager-overview": {
+      "seconds": 4.8
+    },
+    "04-manager-po": {
+      "seconds": 12.9
+    },
+    "05-receiver-login": {
+      "seconds": 10.7
+    },
+    "06-receiver-receiving": {
+      "seconds": 16.5
+    },
+    "07-finance-login": {
+      "seconds": 12.2
+    },
+    "08-finance-invoice": {
+      "seconds": 14.3
+    },
+    "09-manager-case": {
+      "seconds": 30.6
+    },
+    "10-finance-verify": {
+      "seconds": 6
+    },
+    "11-supplier": {
+      "seconds": 18.2
+    }
+  }
+}

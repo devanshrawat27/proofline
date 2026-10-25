@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { TrustStrip } from "@/components/landing/trust-strip";
 import { WorkflowSection } from "@/components/landing/workflow-section";
 import { ProductDashboardShowcase } from "@/components/landing/product-dashboard-showcase";
+import { DemoSection } from "@/components/landing/demo-section";
 import { AIMatchingFeatureSection } from "@/components/landing/ai-matching-feature-section";
 import { SiteFooter } from "@/components/landing/site-footer";
 
@@ -22,6 +23,7 @@ export default function LandingPage() {
       <div className="mx-auto max-w-container px-5 sm:px-6">
         <WorkflowSection />
         <ProductDashboardShowcase />
+        <DemoSection />
       </div>
 
       <AIMatchingFeatureSection />

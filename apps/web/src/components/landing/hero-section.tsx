@@ -25,15 +25,20 @@ export function HeroSection() {
             Compare purchase orders, receiving records, and supplier invoices with AI. Identify
             mismatches, track evidence, collaborate with suppliers, and close cases faster.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap items-center gap-3">
             <Link href="/signup">
               <Button size="lg">
                 Get started <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <a href="#how">
+            <a href="#demo">
               <Button size="lg" variant="secondary">
                 <PlayCircle className="h-4 w-4 text-brand" />
+                Watch the demo
+              </Button>
+            </a>
+            <a href="#how">
+              <Button size="lg" variant="ghost">
                 See how it works
               </Button>
             </a>

@@ -1,0 +1,7 @@
+﻿node_modules/
+out/clips/
+out/qc/
+recordings/manager.json
+recordings/finance.json
+recordings/receiver.json
+recordings/auth.json
