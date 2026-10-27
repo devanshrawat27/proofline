@@ -16,6 +16,16 @@ mismatch, and tracks resolution through one auditable workflow.
 > incrementally. See **Status** and **Known limitations** below for exactly what is
 > implemented and verified versus planned.
 
+## Watch the demo
+
+[![Proofline product demo — the full flow in two minutes](proofline-product-demo/assets/demo-poster.jpg)](https://youtu.be/QUia9HSccXc)
+
+▶ **[Watch on YouTube (2 min)](https://youtu.be/QUia9HSccXc)** · 📄 **[MP4](proofline-product-demo/out/proofline-demo.mp4)** · 📁 **[Demo project](proofline-product-demo/README.md)**
+
+Recorded from the live app, not mockups: a purchase order is issued, the warehouse records the
+delivery, finance bills it, the engine flags four discrepancies, and the case is resolved and
+verified — across four roles (procurement manager, warehouse receiver, finance, supplier).
+
 ---
 
 ## Status (Phase 1 — Foundation)
