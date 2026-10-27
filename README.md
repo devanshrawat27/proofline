@@ -2,18 +2,30 @@
 
 > Every delivery. Every discrepancy. Proven.
 
-Proofline is an AI-assisted **supplier delivery discrepancy and dispute-resolution** platform.
-It matches purchase orders, receiving records and supplier invoices, flags every mismatch with
-evidence, and tracks resolution through one auditable workflow.
+AI-assisted **supplier delivery discrepancy and dispute-resolution** platform: match purchase
+orders, receiving records and supplier invoices, flag every mismatch with evidence, and resolve
+it through one auditable workflow.
 
 ## Demo
 
-[![Proofline demo](https://i.ytimg.com/vi/QUia9HSccXc/maxresdefault.jpg)](https://youtu.be/QUia9HSccXc)
+[![Watch the Proofline demo on YouTube](https://i.ytimg.com/vi/QUia9HSccXc/maxresdefault.jpg)](https://youtu.be/QUia9HSccXc)
 
-▶ **Watch the 2-minute demo:** https://youtu.be/QUia9HSccXc
+▶ **[Watch the 2-minute demo on YouTube](https://youtu.be/QUia9HSccXc)**
 
-Recorded from the live app across four roles — procurement manager, warehouse receiver, finance
-and supplier. Source and rebuild steps: [`proofline-product-demo/`](proofline-product-demo/README.md).
+Click the thumbnail to play. It also runs inside the app landing page at
+[`/#demo`](https://proofline-inky.vercel.app/#demo).
+
+## How it works
+
+1. **Order** — Procurement issues a purchase order: supplier, line items, quantities, unit prices.
+2. **Receive** — Warehouse records what actually arrived: received, damaged, delivery reference.
+3. **Bill** — Finance adds the supplier invoice and links each line to the purchase order line.
+4. **Match** — The engine compares order, receipt and invoice, and flags every mismatch with
+   expected vs actual values (quantity, over-delivery, unit price, damaged goods).
+5. **Resolve** — A case is opened from an exception and moves through guarded states:
+   open → under review → resolution proposed → approved → verified, with a full audit timeline.
+6. **Collaborate** — The supplier signs in to their own portal, sees only their own cases, and
+   responds there. Every action is recorded against the case.
 
 ## Live
 
@@ -21,17 +33,6 @@ and supplier. Source and rebuild steps: [`proofline-product-demo/`](proofline-pr
 | --- | --- |
 | Web | https://proofline-inky.vercel.app |
 | API | https://proofline-n9bo.onrender.com (OpenAPI at `/docs`) |
-
-## What works
-
-- Multi-tenant auth (HttpOnly session cookies), RBAC, invitations, members
-- Suppliers and purchase orders (create / edit / issue / cancel)
-- Receiving with partial and damaged records, PO status recompute
-- Invoice + deterministic discrepancy engine: quantity, over-delivery, unit price, damaged goods
-- Dispute cases: state machine, audit timeline, internal/supplier messages, resolutions
-  (propose → approve → verify), supplier portal with its own identity
-- Documents in private storage, AI extraction with human confirmation (Gemini)
-- In-app + email notifications (BullMQ/Redis, SMTP fallback), reports, dashboard, audit log
 
 ## Stack
 

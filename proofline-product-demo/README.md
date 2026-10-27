@@ -1,7 +1,6 @@
 # Proofline — Product Demo
 
-A 2-minute demo recorded from the **live app** (not mockups): four roles, a real purchase order,
-receipt, invoice, four discrepancies and a resolved, verified case.
+A two-minute demo recorded from the **live app** — the full order-to-resolution flow.
 
 ▶ **Watch:** https://youtu.be/QUia9HSccXc
 
