@@ -18,9 +18,12 @@ mismatch, and tracks resolution through one auditable workflow.
 
 ## Watch the demo
 
-[![Proofline product demo — the full flow in two minutes](proofline-product-demo/assets/demo-poster.jpg)](https://youtu.be/QUia9HSccXc)
+[![Proofline product demo — the full flow in two minutes](proofline-product-demo/assets/demo-preview.gif)](https://youtu.be/QUia9HSccXc)
 
 ▶ **[Watch on YouTube (2 min)](https://youtu.be/QUia9HSccXc)** · 📄 **[MP4](proofline-product-demo/out/proofline-demo.mp4)** · 📁 **[Demo project](proofline-product-demo/README.md)**
+
+The preview above loops automatically (it is a GIF — GitHub strips `<video>`/`<iframe>` from
+markdown, so an image is the only way to autoplay there). The full two-minute video has sound.
 
 Recorded from the live app, not mockups: a purchase order is issued, the warehouse records the
 delivery, finance bills it, the engine flags four discrepancies, and the case is resolved and

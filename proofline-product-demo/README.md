@@ -12,9 +12,12 @@ step-by-step captions, lays a music bed under it and exports the MP4.
   plus a “Watch the demo” button in the hero.
 - **Source app:** https://proofline-inky.vercel.app (API: https://proofline-n9bo.onrender.com)
 
-[![Watch the Proofline demo](assets/demo-poster.jpg)](https://youtu.be/QUia9HSccXc)
+[![Watch the Proofline demo](assets/demo-preview.gif)](https://youtu.be/QUia9HSccXc)
 
 ▶ **YouTube:** https://youtu.be/QUia9HSccXc · 📄 **MP4:** [`out/proofline-demo.mp4`](out/proofline-demo.mp4)
+
+The preview is a silently looping GIF (GitHub strips `<video>` and `<iframe>` from markdown, so an
+image is the only autoplay that works there). The full video has music.
 
 <!-- Autoplay preview for local/IDE markdown renderers; GitHub strips <video>, so the poster link above is the portable version. -->
 <video src="out/proofline-demo.mp4" poster="assets/demo-poster.jpg" autoplay muted loop playsinline controls width="100%"></video>
