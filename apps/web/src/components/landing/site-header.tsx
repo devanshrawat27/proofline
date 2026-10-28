@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, PlayCircle, X } from "lucide-react";
 import { Wordmark } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { DEMO_VIDEO_URL } from "@/lib/demo-video";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
   { href: "#product", label: "Product" },
   { href: "#how", label: "How it works" },
-  { href: "#demo", label: "Demo" },
   { href: "#ai", label: "AI matching" },
 ];
 
@@ -52,6 +52,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <a
+            href={DEMO_VIDEO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-subtle transition-colors hover:text-ink"
+          >
+            <PlayCircle className="h-4 w-4 text-brand" aria-hidden />
+            Watch demo
+          </a>
           <Link href="/login">
             <Button variant="ghost" size="sm">
               Sign in
@@ -91,6 +100,11 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="mt-3 flex flex-col gap-2">
+            <a href={DEMO_VIDEO_URL} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
+              <Button variant="ghost" className="w-full">
+                <PlayCircle className="h-4 w-4 text-brand" /> Watch demo
+              </Button>
+            </a>
             <Link href="/login" onClick={() => setOpen(false)}>
               <Button variant="secondary" className="w-full">
                 Sign in

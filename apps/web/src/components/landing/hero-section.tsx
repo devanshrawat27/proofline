@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DEMO_VIDEO_URL } from "@/lib/demo-video";
 import { Reveal } from "./reveal";
 import { MetricsStrip } from "./metrics-strip";
 import { HeroReconciliationScene } from "./scene/verification-scene";
@@ -31,7 +32,7 @@ export function HeroSection() {
                 Get started <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <a href="#demo">
+            <a href={DEMO_VIDEO_URL} target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="secondary">
                 <PlayCircle className="h-4 w-4 text-brand" />
                 Watch the demo

@@ -4,7 +4,7 @@ A two-minute demo recorded from the **live app** — the full order-to-resolutio
 
 ▶ **Watch:** https://youtu.be/QUia9HSccXc
 
-[![Proofline demo](https://i.ytimg.com/vi/QUia9HSccXc/maxresdefault.jpg)](https://youtu.be/QUia9HSccXc)
+[![Watch the Proofline demo](assets/demo-preview.gif)](https://youtu.be/QUia9HSccXc)
 
 - **Spec:** 1920×1080, 30 fps, 128.5 s, H.264 + AAC stereo, background music (no voice-over)
 - **File:** [`out/proofline-demo.mp4`](out/proofline-demo.mp4) · **QC:** [`verification.md`](verification.md)

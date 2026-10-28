@@ -8,12 +8,10 @@ it through one auditable workflow.
 
 ## Demo
 
-[![Watch the Proofline demo on YouTube](https://i.ytimg.com/vi/QUia9HSccXc/maxresdefault.jpg)](https://youtu.be/QUia9HSccXc)
+[![Watch the Proofline demo on YouTube](proofline-product-demo/assets/demo-preview.gif)](https://youtu.be/QUia9HSccXc)
 
-▶ **[Watch the 2-minute demo on YouTube](https://youtu.be/QUia9HSccXc)**
-
-Click the thumbnail to play. It also runs inside the app landing page at
-[`/#demo`](https://proofline-inky.vercel.app/#demo).
+▶ **[Watch the full 2-minute demo on YouTube](https://youtu.be/QUia9HSccXc)** — it also plays
+from the site’s **Watch demo** button.
 
 ## How it works
 
